@@ -14,4 +14,9 @@ public:
         return "Wrong Character.";
     }
 };
+class DivByZeroException : public exception {
+	const char *what() const throw() {
+		return "Divided by zero.";
+	}
+};
 #endif // NFEXCEPTION_H

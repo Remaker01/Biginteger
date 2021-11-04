@@ -102,12 +102,10 @@ class Biginteger{
   public:
     ///The length of the big integer.
     int length; //长度
-    
     /**
      * Construct an empty big integer with the length of 0.
      */
     Biginteger():data(NULL),eff_len(0),length(0) {}
-    
     /**
      * Construct a big integer with a string constant
      * \param s the string constant to be constructed.
@@ -125,7 +123,6 @@ class Biginteger{
         //注长度不是原来的字符串长度了
         else    convert(s+loc,length);
     }
-    
     /**
       * Construct a big integer with a string constant.
       * Note that the string will be converted to <strong>const char *</strong>
@@ -133,10 +130,11 @@ class Biginteger{
       * \throw if the string constant <strong>s</strong> is not a legal integer,throws NumberFormatException.
       */
     Biginteger(string str) {
-        const char *S=str.c_str();
+        char *S=new char[str.length()+1];
+        strcpy(S,str.c_str());
         new(this) Biginteger(S);
+        if(S!=NULL)	   delete S;
     }
-    
     /**
      * Construct an empty big integer with a specific length.
      * \param len length of the integer.
@@ -144,7 +142,6 @@ class Biginteger{
     Biginteger(int len):eff_len(0),length(0) {
         data=new int[(int)ceil(len/(double)NUM_GROUP_SIZE)]();
     }
-    
     /**
       * Construct a big integer with another big integer(Copy constructor).
       */
@@ -157,7 +154,7 @@ class Biginteger{
     }
     Biginteger& operator=(const Biginteger &another) {
         if (this != &another) {  //加上判断，防止自己赋给自己
-            if (data != NULL)    delete data;  //如果原来有数据，则释放数据
+            if (data)    delete data;  //如果原来有数据，则释放数据
             eff_len = another.eff_len;
             length = another.length;
             data = new int[another.eff_len]();
@@ -211,7 +208,6 @@ class Biginteger{
 		return ret;
     }/*注意：拷贝构造函数的引用必须为const引用，因为返回值（拷贝）的函数的结果不能用于参数为普通引用类型的参数*/
     Biginteger operator+(const Biginteger &a) {return Add(a);}
-    
     /**
      * Subtract another number from the number.Using <strong>operator-</strong> has the same effect.<br>
      * <strong>Complexity</strong>:O(n/k),(n=the length of the integer,k=4).
@@ -230,7 +226,6 @@ class Biginteger{
         }
     }
     Biginteger operator-(const Biginteger &a) {return Subt(a);}
-    
     /**
      * Multiply this large integer by another large integer(may have bugs).<br>
      * <strong>Complexity</strong>:O(n<sup>2</sup>/k),(n=the length of the integer,k=4<sup>2</sup>).
@@ -256,7 +251,6 @@ class Biginteger{
         return ret;
     }
     Biginteger operator*(const Biginteger &a) {return Multiply(a);}
-    
     /**
      * Convert the big integer to a string constant.
      * \return the string after converting.
