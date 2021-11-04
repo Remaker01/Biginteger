@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.9.2"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BigIntegar: Bigint.h 源文件</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">BigIntegar<span id="projectnumber">&#160;1.00 alpha</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.9.2 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search",'搜索','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(document).ready(function(){initNavTree('_bigint_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Bigint.h</div></div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*注意点</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> *1.数字存储方式：data[0]为最低位，往后依次升高</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> *2.注意0的特殊处理</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#ifndef BIGINT_H</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#define BIGINT_H</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;cstring&gt;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;algorithm&gt;</span>  <span class="comment">//std::reverse</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;cmath&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;Exceptions.h&quot;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#define NUM_GROUP_SIZE 4</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#define MOD_BASE 10000</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">using</span> std::string;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">using</span> std::reverse;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">using</span> std::min;</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">using</span> std::max;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">using</span> std::bad_exception;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="class_biginteger.html">   32</a></span><span class="keyword">class </span><a class="code hl_class" href="class_biginteger.html">Biginteger</a>{</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordtype">int</span> *data;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordtype">int</span> eff_len;  <span class="comment">//有效长度</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keyword">inline</span> <span class="keywordtype">bool</span> check(<span class="keyword">const</span> <span class="keywordtype">char</span> *s,<span class="keywordtype">int</span> len) {</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=0; i&lt;len; i++) {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            <span class="keywordflow">if</span>(!(s[i]&gt;=<span class="charliteral">&#39;0&#39;</span>&amp;&amp;s[i]&lt;=<span class="charliteral">&#39;9&#39;</span>))    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        }</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    }</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="comment">/*删除前导0*/</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keyword">inline</span> <span class="keywordtype">int</span> firNoneZero(<span class="keyword">const</span> <span class="keywordtype">char</span> *s,<span class="keywordtype">int</span> len) {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="keywordtype">int</span> i;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <span class="keywordflow">for</span>(i=0; i&lt;len-1&amp;&amp;s[i]==<span class="charliteral">&#39;0&#39;</span>; i++);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keywordflow">return</span> i;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    }</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="comment">/*转换为int数组，方便乘法与加法运算*/</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keyword">inline</span> <span class="keywordtype">void</span> convert(<span class="keyword">const</span> <span class="keywordtype">char</span> *s,<span class="keywordtype">int</span> len) {</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordtype">int</span> k=0;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=len-1; i&gt;=0; i-=NUM_GROUP_SIZE) {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            <span class="keywordtype">int</span> now=0;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>            <span class="keywordflow">for</span>(<span class="keywordtype">int</span> j=i-(NUM_GROUP_SIZE-1); j&lt;=i; j++) {</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                <span class="keywordflow">if</span>(j&lt;0)    <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>                now=now*10+(s[j]-<span class="charliteral">&#39;0&#39;</span>);</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>            }</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>            data[k++]=now;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        }</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    }</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="comment">/*处理加法剩下的位数。a为位数较多的数*/</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keyword">inline</span> <span class="keywordtype">void</span> Add_lefts(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a,<a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;res,<span class="keywordtype">bool</span> &amp;carry,<span class="keywordtype">int</span> minlen) {</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=minlen; i&lt;a.eff_len; i++) {</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            <span class="keywordtype">int</span> now=a.data[i]+carry;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            res.data[res.eff_len++]=now%MOD_BASE;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            carry=(bool)(now/MOD_BASE);</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    }</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="comment">/*求长度*/</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keyword">inline</span> <span class="keywordtype">void</span> make_length(<a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="keywordtype">int</span> highest=a.data[a.eff_len-1];</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                <span class="keywordflow">if</span>(a.eff_len==1&amp;&amp;highest==0)  a.<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>=1;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <span class="keywordflow">else</span>   a.<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>=(a.eff_len-1)*NUM_GROUP_SIZE+(<span class="keywordtype">int</span>)log10(highest)+1;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    }</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="comment">/*处理减法。在此处提供统一接口是因为结果可正可负*/</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <a class="code hl_class" href="class_biginteger.html">Biginteger</a> general_subt(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;large,<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;small) {</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="keywordtype">bool</span> tw=0;  <span class="comment">//退位</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <a class="code hl_class" href="class_biginteger.html">Biginteger</a> ret(large.<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>);</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=0; i&lt;small.eff_len; i++) {</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            <span class="keywordtype">int</span> now=large.data[i]-small.data[i]-tw;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            <span class="keywordflow">if</span>(now&lt;0) {</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                tw=1;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>                now=MOD_BASE-abs(now);</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            }</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <span class="keywordflow">else</span>    tw=0;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>            ret.data[ret.eff_len++]=now%MOD_BASE;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        }<span class="comment">//处理后面几位</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=small.eff_len; i&lt;large.eff_len; i++) {</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>            <span class="keywordtype">int</span> now=large.data[i]-tw;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            <span class="keywordflow">if</span>(now&lt;0) {</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                tw=1;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                now=MOD_BASE-abs(now);</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            }</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>            <span class="keywordflow">else</span>    tw=0;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>            ret.data[ret.eff_len++]=now%MOD_BASE;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        }</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        <span class="comment">//前导零的特殊处理。注意a==b的特殊情况</span></div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        <span class="keywordflow">if</span>(ret.data[ret.eff_len-1]==0&amp;&amp;ret.data[0]!=0)    ret.eff_len--;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        make_length(ret);</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    }</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">  103</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>; <span class="comment">//长度</span></div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno"><a class="line" href="class_biginteger.html#a21756d968ef9ac08e3731cae5f8fe502">  107</a></span><span class="comment"></span>    <a class="code hl_function" href="class_biginteger.html#a21756d968ef9ac08e3731cae5f8fe502">Biginteger</a>():data(NULL),eff_len(0),<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>(0) {}</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="class_biginteger.html#ae4615925f117a9633f8fc9f42ee8d318">  113</a></span>    <a class="code hl_function" href="class_biginteger.html#ae4615925f117a9633f8fc9f42ee8d318">Biginteger</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *s) {</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <span class="keywordflow">if</span>(s==NULL) <span class="keywordflow">throw</span> bad_exception();</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        <span class="keywordtype">int</span> len=strlen(s);</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        <span class="keywordflow">if</span>(!check(s,len))    <span class="keywordflow">throw</span> <a class="code hl_class" href="class_number_format_exception.html">NumberFormatException</a>();</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        <span class="keywordtype">int</span> loc=firNoneZero(s,len);</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        <a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>=len-loc;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        eff_len=ceil(<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>/(<span class="keywordtype">double</span>)NUM_GROUP_SIZE);</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        data=<span class="keyword">new</span> <span class="keywordtype">int</span>[eff_len]();</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        <span class="keywordflow">if</span>(strcmp(s,<span class="stringliteral">&quot;0&quot;</span>)==0)    data[0]=0;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        <span class="comment">//注长度不是原来的字符串长度了</span></div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        <span class="keywordflow">else</span>    convert(s+loc,<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>);</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    }</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno"><a class="line" href="class_biginteger.html#a9df141c0f08c604235dca2ad403e1b99">  131</a></span>    <a class="code hl_function" href="class_biginteger.html#a9df141c0f08c604235dca2ad403e1b99">Biginteger</a>(<span class="keywordtype">string</span> str) {</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        <span class="keyword">const</span> <span class="keywordtype">char</span> *S=str.c_str();</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        <span class="keyword">new</span>(<span class="keyword">this</span>) <a class="code hl_function" href="class_biginteger.html#a21756d968ef9ac08e3731cae5f8fe502">Biginteger</a>(S);</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    }</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno"><a class="line" href="class_biginteger.html#a6226edabfed468509ac46b47204bc8ea">  139</a></span>    <a class="code hl_function" href="class_biginteger.html#a6226edabfed468509ac46b47204bc8ea">Biginteger</a>(<span class="keywordtype">int</span> len):eff_len(0),<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>(0) {</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        data=<span class="keyword">new</span> <span class="keywordtype">int</span>[(int)ceil(len/(<span class="keywordtype">double</span>)NUM_GROUP_SIZE)]();</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    }</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>      <span class="comment">//拷贝构造函数</span></div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno"><a class="line" href="class_biginteger.html#a4058518547ee370dcc58d8223a3a23f7">  146</a></span>    <a class="code hl_function" href="class_biginteger.html#a4058518547ee370dcc58d8223a3a23f7">Biginteger</a>(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;another) {</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>        eff_len=another.eff_len;</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        <a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>=another.<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>;</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        data=<span class="keyword">new</span> <span class="keywordtype">int</span>[another.eff_len]();</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=0; i&lt;eff_len; i++)    data[i]=another.data[i];</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    }</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span><span class="comment">//    Biginteger operator=(const Biginteger &amp;another) {return Biginteger(another);}</span></div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <span class="comment">/*比较大小。注意从高位向低位比。*/</span></div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno"><a class="line" href="class_biginteger.html#a59ef9265d21c07e5d349828503078083">  159</a></span>    <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="class_biginteger.html#a59ef9265d21c07e5d349828503078083">compareTo</a>(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>        <span class="keywordtype">int</span> alen=a.eff_len;</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        <span class="keywordflow">if</span>(eff_len&gt;a.eff_len)    <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        <span class="keywordflow">if</span>(eff_len&lt;a.eff_len)    <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=alen-1; i&gt;=0; i--) {</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>            <span class="keywordflow">if</span>(data[i]&gt;a.data[i])   <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            <span class="keywordflow">else</span> <span class="keywordflow">if</span>(data[i]&lt;a.data[i])    <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        }</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    }</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    <span class="keywordtype">bool</span> operator&lt;(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a)  {<span class="keywordflow">return</span> this-&gt;<a class="code hl_function" href="class_biginteger.html#a59ef9265d21c07e5d349828503078083">compareTo</a>(a)==-1;}</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keywordtype">bool</span> operator&gt;(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a)  {<span class="keywordflow">return</span> this-&gt;<a class="code hl_function" href="class_biginteger.html#a59ef9265d21c07e5d349828503078083">compareTo</a>(a)==1;}</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    <span class="keywordtype">bool</span> operator&gt;=(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {<span class="keywordflow">return</span> this-&gt;<a class="code hl_function" href="class_biginteger.html#a59ef9265d21c07e5d349828503078083">compareTo</a>(a)&gt;=0;}</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        <span class="keywordtype">bool</span> operator&lt;=(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {<span class="keywordflow">return</span> this-&gt;<a class="code hl_function" href="class_biginteger.html#a59ef9265d21c07e5d349828503078083">compareTo</a>(a)&lt;=0;}</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {<span class="keywordflow">return</span> this-&gt;<a class="code hl_function" href="class_biginteger.html#a59ef9265d21c07e5d349828503078083">compareTo</a>(a)==0;}</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>    <span class="keywordtype">bool</span> operator!=(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {<span class="keywordflow">return</span> this-&gt;<a class="code hl_function" href="class_biginteger.html#a59ef9265d21c07e5d349828503078083">compareTo</a>(a)!=0;}</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno"><a class="line" href="class_biginteger.html#a613ba3e80119be32e985441e95cc80ed">  182</a></span>    <a class="code hl_class" href="class_biginteger.html">Biginteger</a> <a class="code hl_function" href="class_biginteger.html#a613ba3e80119be32e985441e95cc80ed">Add</a>(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>                <span class="keywordtype">int</span> minlen=min(eff_len,a.eff_len);</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>                <span class="keywordtype">bool</span> carry=0;  <span class="comment">//进位标记</span></div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                <a class="code hl_class" href="class_biginteger.html">Biginteger</a> ret(max(<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>,a.<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>)+1);  <span class="comment">//待返回结果</span></div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>                <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=0; i&lt;minlen; i++) {</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>            <span class="keywordtype">int</span> now=data[i]+a.data[i]+carry;</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            ret.data[ret.eff_len++]=now%MOD_BASE;</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>            carry=(bool)(now/MOD_BASE);</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                }</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>                <span class="keywordflow">if</span>(minlen==eff_len)  Add_lefts(a,ret,carry,minlen);</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>                <span class="keywordflow">else</span>    Add_lefts(*<span class="keyword">this</span>,ret,carry,minlen);</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>                <span class="comment">//处理多余进位</span></div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>                <span class="keywordflow">if</span>(carry!=0)   ret.data[ret.eff_len++]=1;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        make_length(ret);</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>                <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    }<span class="comment">/*注意：拷贝构造函数的引用必须为const引用，因为返回值（拷贝）的函数的结果不能用于参数为普通引用类型的参数*/</span></div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    <a class="code hl_class" href="class_biginteger.html">Biginteger</a> operator+(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {<span class="keywordflow">return</span> <a class="code hl_function" href="class_biginteger.html#a613ba3e80119be32e985441e95cc80ed">Add</a>(a);}</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno"><a class="line" href="class_biginteger.html#acc0f167fddfd031a425a9c844113cb5b">  205</a></span>    <a class="code hl_class" href="class_biginteger.html">Biginteger</a> <a class="code hl_function" href="class_biginteger.html#acc0f167fddfd031a425a9c844113cb5b">Subt</a>(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        <span class="keywordflow">if</span>(<a class="code hl_function" href="class_biginteger.html#a59ef9265d21c07e5d349828503078083">compareTo</a>(a)&gt;=0) {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>            <a class="code hl_class" href="class_biginteger.html">Biginteger</a> ret(general_subt(*<span class="keyword">this</span>,a));</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        }</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>            <a class="code hl_class" href="class_biginteger.html">Biginteger</a> ret(general_subt(a,*<span class="keyword">this</span>));</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            ret.data[ret.eff_len-1]=-ret.data[ret.eff_len-1];</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>            <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        }</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    }</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    <a class="code hl_class" href="class_biginteger.html">Biginteger</a> operator-(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {<span class="keywordflow">return</span> <a class="code hl_function" href="class_biginteger.html#acc0f167fddfd031a425a9c844113cb5b">Subt</a>(a);}</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno"><a class="line" href="class_biginteger.html#a923e93c074d626e874c4833e315f4a8c">  223</a></span>    <a class="code hl_class" href="class_biginteger.html">Biginteger</a> <a class="code hl_function" href="class_biginteger.html#a923e93c074d626e874c4833e315f4a8c">Multiply</a>(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        <span class="keywordtype">int</span> aLen=a.eff_len;</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        <a class="code hl_class" href="class_biginteger.html">Biginteger</a> ret(<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>+a.<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>);  <span class="comment">//存放结果</span></div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=0; i&lt;eff_len; i++) {  <span class="comment">//本数</span></div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            <span class="keywordtype">int</span> carry=0;</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            <span class="keywordflow">for</span>(<span class="keywordtype">int</span> j=0; j&lt;aLen; j++) {  <span class="comment">//a</span></div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                <span class="keywordtype">int</span> now=data[i]*a.data[j]+carry+ret.data[i+j];</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                carry=now/MOD_BASE;</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                ret.data[i+j]=now%MOD_BASE;</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            }</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>            <span class="keywordflow">if</span>(carry!=0)    ret.data[i+aLen]=carry;</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        }</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        ret.eff_len=(int)ceil((<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>+a.<a class="code hl_variable" href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">length</a>)/(double)NUM_GROUP_SIZE);  <span class="comment">//?</span></div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        <span class="keywordtype">int</span> highest=ret.data[ret.eff_len-1];</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>        <span class="comment">//最高位为0时，有效位数要-1，注意如果本来就是1就不用减</span></div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>        <span class="keywordflow">if</span>(highest==0&amp;&amp;ret.eff_len!=1)    ret.eff_len--;</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                make_length(ret);</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    }</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <a class="code hl_class" href="class_biginteger.html">Biginteger</a> operator*(<span class="keyword">const</span> <a class="code hl_class" href="class_biginteger.html">Biginteger</a> &amp;a) {<span class="keywordflow">return</span> <a class="code hl_function" href="class_biginteger.html#a923e93c074d626e874c4833e315f4a8c">Multiply</a>(a);}</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno"><a class="line" href="class_biginteger.html#ae077e93a0c2531e3f8171a2c2b2efc4b">  247</a></span>    <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code hl_function" href="class_biginteger.html#ae077e93a0c2531e3f8171a2c2b2efc4b">toString</a>() {</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        <span class="keywordflow">if</span>(data[0]==0&amp;&amp;eff_len==1)    <span class="keywordflow">return</span> <span class="stringliteral">&quot;0&quot;</span>;</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>        <span class="keywordtype">string</span> ret=<span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>                <span class="keywordtype">int</span> now=0;</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>                <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=0; i&lt;eff_len-1; i++) {</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>                        <span class="keywordtype">int</span> now=data[i];</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>                        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> j=0; j&lt;NUM_GROUP_SIZE; j++) {</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>                                ret.append(1,(now%10)+<span class="charliteral">&#39;0&#39;</span>);</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>                                now/=10;</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>                        }</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                }</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>                now=abs(data[eff_len-1]);</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                <span class="comment">//处理最高位</span></div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                <span class="keywordflow">while</span>(now&gt;0) {</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>                        ret.append(1,(now%10)+<span class="charliteral">&#39;0&#39;</span>);</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                        now/=10;</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                }</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                <span class="comment">//处理减法结果为负数的情况</span></div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>                <span class="keywordflow">if</span>(data[eff_len-1]&lt;0)   ret+=<span class="stringliteral">&quot;-&quot;</span>;</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                reverse(ret.begin(),ret.end());</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>                <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    }</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    <a class="code hl_class" href="class_biginteger.html">~Biginteger</a>() {</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                <span class="keywordflow">if</span>(data!=NULL) {</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>                <span class="keyword">delete</span> []data;</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>                data=NULL;</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>                }</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        }</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>};</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span><span class="preprocessor">#endif </span><span class="comment">// BIGINT_H</span></div>
+<div class="ttc" id="aclass_biginteger_html"><div class="ttname"><a href="class_biginteger.html">Biginteger</a></div><div class="ttdef"><b>Definition:</b> Bigint.h:32</div></div>
+<div class="ttc" id="aclass_biginteger_html_a21756d968ef9ac08e3731cae5f8fe502"><div class="ttname"><a href="class_biginteger.html#a21756d968ef9ac08e3731cae5f8fe502">Biginteger::Biginteger</a></div><div class="ttdeci">Biginteger()</div><div class="ttdef"><b>Definition:</b> Bigint.h:107</div></div>
+<div class="ttc" id="aclass_biginteger_html_a4058518547ee370dcc58d8223a3a23f7"><div class="ttname"><a href="class_biginteger.html#a4058518547ee370dcc58d8223a3a23f7">Biginteger::Biginteger</a></div><div class="ttdeci">Biginteger(const Biginteger &amp;another)</div><div class="ttdef"><b>Definition:</b> Bigint.h:146</div></div>
+<div class="ttc" id="aclass_biginteger_html_a59ef9265d21c07e5d349828503078083"><div class="ttname"><a href="class_biginteger.html#a59ef9265d21c07e5d349828503078083">Biginteger::compareTo</a></div><div class="ttdeci">int compareTo(const Biginteger &amp;a)</div><div class="ttdef"><b>Definition:</b> Bigint.h:159</div></div>
+<div class="ttc" id="aclass_biginteger_html_a613ba3e80119be32e985441e95cc80ed"><div class="ttname"><a href="class_biginteger.html#a613ba3e80119be32e985441e95cc80ed">Biginteger::Add</a></div><div class="ttdeci">Biginteger Add(const Biginteger &amp;a)</div><div class="ttdef"><b>Definition:</b> Bigint.h:182</div></div>
+<div class="ttc" id="aclass_biginteger_html_a6226edabfed468509ac46b47204bc8ea"><div class="ttname"><a href="class_biginteger.html#a6226edabfed468509ac46b47204bc8ea">Biginteger::Biginteger</a></div><div class="ttdeci">Biginteger(int len)</div><div class="ttdef"><b>Definition:</b> Bigint.h:139</div></div>
+<div class="ttc" id="aclass_biginteger_html_a8e5b9f9b58b8591e9186e3f0dbcf9ffb"><div class="ttname"><a href="class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb">Biginteger::length</a></div><div class="ttdeci">int length</div><div class="ttdoc">The length of the big integer.</div><div class="ttdef"><b>Definition:</b> Bigint.h:103</div></div>
+<div class="ttc" id="aclass_biginteger_html_a923e93c074d626e874c4833e315f4a8c"><div class="ttname"><a href="class_biginteger.html#a923e93c074d626e874c4833e315f4a8c">Biginteger::Multiply</a></div><div class="ttdeci">Biginteger Multiply(const Biginteger &amp;a)</div><div class="ttdef"><b>Definition:</b> Bigint.h:223</div></div>
+<div class="ttc" id="aclass_biginteger_html_a9df141c0f08c604235dca2ad403e1b99"><div class="ttname"><a href="class_biginteger.html#a9df141c0f08c604235dca2ad403e1b99">Biginteger::Biginteger</a></div><div class="ttdeci">Biginteger(string str)</div><div class="ttdef"><b>Definition:</b> Bigint.h:131</div></div>
+<div class="ttc" id="aclass_biginteger_html_acc0f167fddfd031a425a9c844113cb5b"><div class="ttname"><a href="class_biginteger.html#acc0f167fddfd031a425a9c844113cb5b">Biginteger::Subt</a></div><div class="ttdeci">Biginteger Subt(const Biginteger &amp;a)</div><div class="ttdef"><b>Definition:</b> Bigint.h:205</div></div>
+<div class="ttc" id="aclass_biginteger_html_ae077e93a0c2531e3f8171a2c2b2efc4b"><div class="ttname"><a href="class_biginteger.html#ae077e93a0c2531e3f8171a2c2b2efc4b">Biginteger::toString</a></div><div class="ttdeci">const string toString()</div><div class="ttdef"><b>Definition:</b> Bigint.h:247</div></div>
+<div class="ttc" id="aclass_biginteger_html_ae4615925f117a9633f8fc9f42ee8d318"><div class="ttname"><a href="class_biginteger.html#ae4615925f117a9633f8fc9f42ee8d318">Biginteger::Biginteger</a></div><div class="ttdeci">Biginteger(const char *s)</div><div class="ttdef"><b>Definition:</b> Bigint.h:113</div></div>
+<div class="ttc" id="aclass_number_format_exception_html"><div class="ttname"><a href="class_number_format_exception.html">NumberFormatException</a></div><div class="ttdef"><b>Definition:</b> Exceptions.h:11</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Bigint.h</b></li>
+    <li class="footer">生成于 2021年 十一月 2日 星期二 15:13:19 , 为 BigIntegar使用  <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+  </ul>
+</div>
+</body>
+</html>
