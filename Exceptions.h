@@ -1,11 +1,9 @@
-#ifndef NFEXCEPTION_H
-#define NFEXCEPTION_H
+#ifndef EXCEPTIONS_H
+#define EXCEPTIONS_H
 #include <stdexcept>
 using std::exception;  //±ðÍüÁË¼Óusing£¡
 /**
- * Class that defines Exceptions.<br>
- * If the format of a number string constant contains non-digit character(s),the exception will throw.
- *
+ * Throw If the format of any number string constant contains non-digit character(s)
  */
 
 class NumberFormatException : public exception {
@@ -14,9 +12,13 @@ public:
         return "Wrong Character.";
     }
 };
+/**
+ * Throw if the divisor is zero.
+ */
 class DivByZeroException : public exception {
+public:
 	const char *what() const throw() {
 		return "Divided by zero.";
 	}
 };
-#endif // NFEXCEPTION_H
+#endif // EXCEPTIONS_H

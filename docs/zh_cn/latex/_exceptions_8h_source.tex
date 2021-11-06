@@ -1,0 +1,23 @@
+\hypertarget{_exceptions_8h_source}{}\doxysection{Exceptions.\+h}
+\label{_exceptions_8h_source}\index{E:/DataStructure/LinearTable/BigIntegar/Exceptions.h@{E:/DataStructure/LinearTable/BigIntegar/Exceptions.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef NFEXCEPTION\_H}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define NFEXCEPTION\_H}}
+\DoxyCodeLine{3 \textcolor{preprocessor}{\#include <stdexcept>}}
+\DoxyCodeLine{4 \textcolor{keyword}{using} std::exception;  \textcolor{comment}{//别忘了加using！}}
+\DoxyCodeLine{10 \textcolor{comment}{}\textcolor{keyword}{class }\mbox{\hyperlink{class_number_format_exception}{NumberFormatException}} : \textcolor{keyword}{public} exception \{}
+\DoxyCodeLine{11 \textcolor{keyword}{public}:}
+\DoxyCodeLine{12     \textcolor{keyword}{const} \textcolor{keywordtype}{char} *what() \textcolor{keyword}{const} \textcolor{keywordflow}{throw}() \{}
+\DoxyCodeLine{13         \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}Wrong Character."{}};}
+\DoxyCodeLine{14     \}}
+\DoxyCodeLine{15 \};}
+\DoxyCodeLine{20 \textcolor{keyword}{class }\mbox{\hyperlink{class_div_by_zero_exception}{DivByZeroException}} : \textcolor{keyword}{public} exception \{}
+\DoxyCodeLine{21 \textcolor{keyword}{public}:}
+\DoxyCodeLine{22     \textcolor{keyword}{const} \textcolor{keywordtype}{char} *what() \textcolor{keyword}{const} \textcolor{keywordflow}{throw}() \{}
+\DoxyCodeLine{23         \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}Divided by zero."{}};}
+\DoxyCodeLine{24     \}}
+\DoxyCodeLine{25 \};}
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// NFEXCEPTION\_H}}
+
+\end{DoxyCode}

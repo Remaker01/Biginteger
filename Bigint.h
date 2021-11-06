@@ -23,7 +23,7 @@ using std::bad_exception;
  * Though this class is far behind Biginteger classes in other High level programming language such as Java,(for instance,
  * it does NOT support negative numbers and bit operations temporarily)I still hope to learn something(such as the C++ language,algorithm and
  * <s>English</s>)from it.<br>
- * All comments and suggestions beneficial to this project are welcome(<small><s>not the passive voice</s></small>).
+ * All comments and suggestions beneficial to this project are welcome.
  * \note This class provides an internal attribute(which is a pointer to <em>int</em>) to store the big integer.To increase the efficiency,
  * the big integer will be divided into groups every four digits(to ensure that the mid-result of multiply won't exceed the range of <em>int</em>.)
  * \version 1.0 alpha
@@ -112,7 +112,7 @@ class Biginteger{
      * \throw if the string constant <strong>s</strong> is not a legal integer,throws NumberFormatException.
      */
     Biginteger(const char *s) {
-        if(s==NULL) throw bad_exception();
+        if(s==NULL)    throw bad_exception();
         int len=strlen(s);
         if(!check(s,len))    throw NumberFormatException();
         int loc=firNoneZero(s,len);
