@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "Biginteger", "index.html", [
-    [ "Biginteger<br>", "md__e___data_structure__linear_table__big_integar__r_e_a_d_m_e.html", null ],
+    [ "Biginteger<br>", "md__big_integer__r_e_a_d_m_e.html", null ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
