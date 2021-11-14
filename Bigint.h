@@ -13,9 +13,8 @@ using std::string;
  * It is a big integer class in C++.<br>
  * Since the C++ standard library has no big integer classes,I wrote this IMMATURE Biginteger class which
  * can complete simple arithmetics including add(+),subtract(-),multiply(*),and division(/)(Not ready).<br>
- * Though this class is far behind Biginteger classes in other High level programming language such as Java,(for instance,
- * it does NOT support negative numbers and bit operations temporarily)I still hope to learn something(such as the C++ language,algorithm and
- * <s>English</s>)from it.<br>
+ * Though this class is far behind Biginteger classes in other High level programming languages such as Java,
+ * I still hope to learn something(such as the C++ language,algorithm and<s>English</s>)from it.<br>
  * All comments and suggestions beneficial to this project are welcome.
  * \note <ol><li>This class provides an internal attribute(which is a pointer to <em>int</em>) to store the big integer.To increase the efficiency,
  * the big integer will be divided into groups every four digits(to ensure that the mid-result of multiply won't exceed the range of <em>int</em>.)</li>
