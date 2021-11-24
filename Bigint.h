@@ -5,21 +5,22 @@
 #include <algorithm>
 #include <cmath>
 #include "Exceptions.h"
-#define NUM_GROUP_SIZE 4
-#define MOD_BASE 10000
+#define NUM_GROUP_SIZE 8
+#define MOD_BASE 100000000
 using std::string;
 
 /**
  * It is a big integer class in C++.<br>
  * Since the C++ standard library has no big integer classes,I wrote this IMMATURE Biginteger class which
- * can complete simple arithmetics including add(+),subtract(-),multiply(*),and division(/)(Not ready).<br>
- * Though this class is far behind Biginteger classes in other High level programming languages such as Java,
- * I still hope to learn something(such as the C++ language,algorithm and<s>English</s>)from it.<br>
+ * can complete simple arithmetics including add(+),subtract(-),multiply(*),division(/) and so on.<br>
+ * Though this class is far behind Biginteger classes in other high level programming languages such as Java,
+ * I still hope to learn something(such as the C++ language,algorithm and <s>English</s>)from it.<br>
  * All comments and suggestions beneficial to this project are welcome.
- * \note <ol><li>This class provides an internal attribute(which is a pointer to <em>int</em>) to store the big integer.To increase the efficiency,
- * the big integer will be divided into groups every four digits(to ensure that the mid-result of multiply won't exceed the range of <em>int</em>.)</li>
- * <li>In *complexity* of all functions, <em>n</em> represents the length of *this big integer*,and *m* represents the length of another one.
- * \version 1.0 beta1(1.0.211112)
+ * \note <ol><li>This class provides an internal attribute(which is a pointer to <em>int</em>) to store the big integer.
+ * To increase the efficiency,the big integer will be divided into groups every eight digits.</li>
+ * <li>In *complexity* of all functions, <em>n</em> represents the length of *this big integer*,and *m* represents the length of another one. *k=8* if there are
+ * no special notes.
+ * \version 1.0 beta2(1.0.211122)
  */
 class Biginteger {
   private:
@@ -53,46 +54,65 @@ class Biginteger {
         }
     }
     /*处理加法剩下的位数。a为位数较多的数*/
-    inline void Add_lefts(const Biginteger &a,Biginteger &res,bool &carry,int minlen) {
+    inline void Add_lefts(const Biginteger &a,Biginteger &res,bool &carry,int minlen) const {
         for(int i = minlen; i < a.eff_len; i++) {
             int now = a.data[i] + carry;
             res.data[res.eff_len++] = now % MOD_BASE;
             carry = (bool)(now / MOD_BASE);
         }
     }
+    inline void remove_zero(Biginteger &a) const {
+        while(a.data[a.eff_len - 1] == 0&&a.eff_len > 1)
+            a.eff_len--;
+    } 
     /*求长度*/
-    inline void make_length(Biginteger &a) {
+    inline void make_length(Biginteger &a) const {
         int highest = a.data[a.eff_len - 1];
 		if(a.eff_len == 1&&highest == 0)    a.length = 1;
         else    a.length = (a.eff_len - 1) * NUM_GROUP_SIZE + (int)log10(highest) + 1;
     }
     /*处理减法。在此处提供统一接口是因为结果可正可负*/
-    Biginteger general_subt(const Biginteger &large,const Biginteger &small) {
-        bool tw = 0;  //退位
+    Biginteger general_subt(const Biginteger &large,const Biginteger &small) const {
+        bool carry = 0;  //退位
         Biginteger ret(large.length);
         for(int i = 0; i < small.eff_len; i++) {
-            int now = large.data[i] - small.data[i] - tw;
+            int now = large.data[i] - small.data[i] - carry;
             if(now < 0) {
-                tw = 1;
-                now = MOD_BASE - abs(now);
+                carry = 1;
+                now = MOD_BASE + now;
             }
-            else    tw = 0;
-            ret.data[ret.eff_len++] = now % MOD_BASE;
+            else    carry = 0;
+            ret.data[ret.eff_len++] = now;
         }//处理后面几位
         for(int i = small.eff_len; i < large.eff_len; i++) {
-            int now = large.data[i] - tw;
+            int now = large.data[i] - carry;
             if(now < 0) {
-                tw = 1;
-                now = MOD_BASE - abs(now);
+                carry = 1;
+                now = MOD_BASE + now;
             }
-            else    tw = 0;
-            ret.data[ret.eff_len++] = now % MOD_BASE;
+            else    carry = 0;
+            ret.data[ret.eff_len++] = now;
         }
         //前导零的特殊处理。注意a==b的特殊情况
         //注意：由于上面统一用位数较多数的位数初始化，所以此处可能不知要删1个
-        while(ret.data[ret.eff_len - 1] == 0&&ret.eff_len > 1)
-            ret.eff_len--;
+        remove_zero(ret);
         make_length(ret);
+        return ret;
+    }
+    //除以2，方便除法时使用二分。
+    Biginteger divByTwo() const {
+        Biginteger ret(*this);
+        bool carry = 0; //进位指示器
+        for(int i = eff_len - 1; i >= 0; i--) {
+            int now = data[i] >> 1;
+            if(carry) {
+                now = (now + (MOD_BASE >> 1)) % MOD_BASE;
+            }
+            ret.data[i] = now;
+            carry = data[i] & 1;
+        }
+        remove_zero(ret);
+//        make_length(ret);
         return ret;
     }
   public:
@@ -117,7 +137,7 @@ class Biginteger {
         data = new int[eff_len]();
         sign = (s[0] == '-') ? -1 : 1;
         //0的特殊处理
-        if(strcmp(s,"0") == 0||strcmp(s,"-0") == 0) {
+        if(strcmp(s + loc,"0") == 0||strcmp(s + loc,"-0") == 0) {
             data[0] = 0;
             sign = 0;
         }
@@ -167,13 +187,13 @@ class Biginteger {
      * \param a the big integer to compare.
      * \return 1 if this big integer is larger than **a**,0 if equal,and -1 if smaller.
      */
-    inline int compare(const Biginteger &a) {
+    inline int compare(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
         int alen = a.eff_len;
         //一个为负，一个不为负
         if(sign == -1&&a.sign != -1)    return -1;
         if(sign == 1&&a.sign != 1)      return 1;
-        if(sign == 0&&a.sign != 0)      return (a.sign == 1) ? -1 : 1;
+        if(sign == 0&&a.sign != 0)      return -a.sign;
         int ret = 0;
         if(eff_len > a.eff_len)         ret = 1;
         else if(eff_len < a.eff_len)    ret = -1;
@@ -193,17 +213,17 @@ class Biginteger {
         if(sign == -1)    ret = -ret;
         return ret;
     }
-    inline bool operator<(const Biginteger &a)  {return compare(a) == -1;}
-    inline bool operator>(const Biginteger &a)  {return compare(a) == 1;}
-    inline bool operator>=(const Biginteger &a) {return compare(a) >= 0;}
-	inline bool operator<=(const Biginteger &a) {return compare(a) <= 0;}
-    inline bool operator==(const Biginteger &a) {return compare(a) == 0;}
-    inline bool operator!=(const Biginteger &a) {return compare(a) != 0;}
+    inline bool operator< (const Biginteger &a) const  {return compare(a) == -1;}
+    inline bool operator> (const Biginteger &a) const  {return compare(a) == 1;}
+    inline bool operator>= (const Biginteger &a) const {return compare(a) >= 0;}
+	inline bool operator<= (const Biginteger &a) const {return compare(a) <= 0;}
+    inline bool operator== (const Biginteger &a) const {return compare(a) == 0;}
+    inline bool operator!= (const Biginteger &a) const {return compare(a) != 0;}
     /**
      * Find the opposite number of the big integer.
      * \return the result.
      */
-    Biginteger Negate() {
+    Biginteger Negate() const{
         if(sign == 2)    throw NullException();
         Biginteger ret = *this;
         ret.sign = -ret.sign;
@@ -212,18 +232,18 @@ class Biginteger {
     /** Find the absolute value of the big integer.
      * \return the result.
      */
-     Biginteger absolute() {
+     Biginteger absolute() const{
         if(sign == 2)    throw NullException();
         if(sign != -1)   return *this;
         return Negate();
      }
     /**
-     * Add the big integer with another one.Using **operator+** has the same effect.<br>
+     * Add the integer with another one.Using **operator+** has the same effect.<br>
      * **Complexity**:O(max(n,m)/k).
      * \param a another big integer.
      * \return the result.<br>
      */
-    Biginteger Add(const Biginteger &a) {
+    Biginteger Add(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
         //(1,-1)
         if(sign == 1&&a.sign == -1) {
@@ -257,15 +277,15 @@ class Biginteger {
         else if(sign == -1||a.sign == -1)   ret.sign = -1;
         make_length(ret);
 		return ret;
-    }/*注意：拷贝构造函数的引用必须为const引用，因为返回值（拷贝）的函数的结果不能用于参数为普通引用类型的参数*/
-    Biginteger operator+(const Biginteger &a) {return Add(a);}
+    }
+    Biginteger operator+ (const Biginteger &a) const {return Add(a);}
     /**
-     * Subtract another number from the number.Using **operator-** has the same effect.<br>
+     * Subtract another integer from the integer.Using **operator-** has the same effect.<br>
      * **Complexity**:O(max(n,m)/k).
      * \param a another big integer.
      * \return the result.<br>
      */
-    Biginteger Subt(const Biginteger &a) {
+    Biginteger Subt(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
         Biginteger suber = *this,subee = a;
         //(1,0),(-1,0),(0,0)
@@ -295,21 +315,22 @@ class Biginteger {
         ret.sign = tmp;
         return ret;
     }
-    Biginteger operator-(const Biginteger &a) {return Subt(a);}
+    Biginteger operator- (const Biginteger &a) const {return Subt(a);}
     /**
-     * Multiply this large integer by another large integer(may have a little bugs).<br>
-     * **Complexity**:O(nm/k).
+     * Multiply this integer by another one.<br>
+     * **Complexity**:O(nm/(k^2)).
      * \param a another big integer.
      * \return the result.
      */
-    Biginteger Multiply(const Biginteger &a) {
+    Biginteger Multiply(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
         int aLen = a.eff_len;
         Biginteger ret(length + a.length);  //存放结果
+
         for(int i = 0; i < eff_len; i++) {  //本数
             int carry = 0;
             for(int j = 0; j < aLen; j++) {  //a
-                int now = data[i] * a.data[j] + carry + ret.data[i + j];
+                long long now = (long long)data[i] * a.data[j] + carry + ret.data[i + j];
                 carry = now / MOD_BASE;
                 ret.data[i + j]=now % MOD_BASE;
             }
@@ -319,21 +340,65 @@ class Biginteger {
         if(sign == 0||a.sign == 0)    ret.sign = 0;
         ret.eff_len = (int)ceil((length + a.length) / (double)NUM_GROUP_SIZE);  //?
         //最高位为0时，有效位数要-1，注意如果本来就是1就不用减
-        while(ret.data[ret.eff_len - 1] == 0&&ret.eff_len != 1)
-            ret.eff_len--;
+        remove_zero(ret);
 		make_length(ret);
         return ret;
     }
-    Biginteger operator*(const Biginteger &a) {return Multiply(a);}
+    Biginteger operator* (const Biginteger &a) const {return Multiply(a);}
+    /**
+     * Divide the integer by another one.Using <strong>operator/ </strong>has the same effect.
+     * \param a the divisor.
+     * \return the result.
+     * \throws <em>DivByZeroException</em> if the divisor is zero.
+     * \note <em>Experimental</em>.
+     */
+    Biginteger Divide(const Biginteger &a) const {
+    	if(sign == 2||a.sign == 2)	   throw NullException();
+        //除数为0
+        if(a.sign == 0)    throw DivByZeroException();
+		const Biginteger ONE("1"),Divided(absolute()),Divisor(a.absolute());
+		Biginteger l(ONE),r(Divided + ONE),mid;
+        //被除数更小
+        if(Divisor > Divided)      return Biginteger("0");
+
+        else {
+            while (l < r) {
+                mid = (l.Add(r)).divByTwo();
+                if(mid.Multiply(Divisor) > Divided)    r = mid;
+                else	l = mid.Add(ONE);
+            }
+            l = l.Subt(ONE);
+        }
+        l.sign = (sign == a.sign) ? 1 : -1;
+        remove_zero(l);
+		make_length(l);
+        return l;
+    }
+    Biginteger operator/ (const Biginteger &a) const {return Divide(a);}
+    /**
+     * Find the remainder of this integer to another one.Using **operator%** has the same effect.
+     * \param a the divisor.
+     * \return the result.
+     * \throws <em>DivByZeroException</em> if the divisor is zero.
+     * \note <em>Experimental</em>.
+     * <br>If dividend is negative,the result will be negative.
+     * <br>In other cases,the result will be positive.
+     */
+    Biginteger Mod(const Biginteger &a) const {
+        Biginteger quot = Divide(a);
+        return Subt(quot.Multiply(a));
+    }
+    Biginteger operator% (const Biginteger &a) const {return Mod(a);}
     /**
      * Convert the big integer to a string constant.
      * \return the string after converting.
      */
-    string toString() {
+    string toString() const {
         if(sign == 2)   throw NullException();
     	if(sign == 0)   return "0";
     	string ret = "";
 		int now = 0;
+
 		for(int i = 0; i < eff_len - 1; i++) {
 			int now = data[i];
 			for(int j = 0; j < NUM_GROUP_SIZE; j++) {
@@ -341,13 +406,12 @@ class Biginteger {
 				now /= 10;
 			}
 		}
-		now = abs(data[eff_len - 1]);
+		now = data[eff_len - 1];
 		//处理最高位
 		do {
 			ret.append(1,(now % 10)+'0');
 			now /= 10;
 		} while(now > 0);
-		//处理减法结果为负数的情况
 		if(sign == -1)    ret += "-";
 		std::reverse(ret.begin(),ret.end());
 		return ret;
