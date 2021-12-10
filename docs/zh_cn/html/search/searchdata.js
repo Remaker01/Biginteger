@@ -1,10 +1,9 @@
 var indexSectionsWithContent =
 {
-  0: "abcdlmnst",
+  0: "abcdmnst",
   1: "bdn",
   2: "abcdmnst",
-  3: "l",
-  4: "b"
+  3: "b"
 };
 
 var indexSectionNames =
@@ -12,8 +11,7 @@ var indexSectionNames =
   0: "all",
   1: "classes",
   2: "functions",
-  3: "variables",
-  4: "pages"
+  3: "pages"
 };
 
 var indexSectionLabels =
@@ -21,7 +19,6 @@ var indexSectionLabels =
   0: "全部",
   1: "类",
   2: "函数",
-  3: "变量",
-  4: "页"
+  3: "页"
 };
 

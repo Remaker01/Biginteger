@@ -31,7 +31,6 @@ var menudata={children:[
 {text:"类继承关系",url:"hierarchy.html"},
 {text:"类成员",url:"functions.html",children:[
 {text:"全部",url:"functions.html"},
-{text:"函数",url:"functions_func.html"},
-{text:"变量",url:"functions_vars.html"}]}]},
+{text:"函数",url:"functions_func.html"}]}]},
 {text:"文件",url:"files.html",children:[
 {text:"文件列表",url:"files.html"}]}]}

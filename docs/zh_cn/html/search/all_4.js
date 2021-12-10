@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['length_0',['length',['../class_biginteger.html#a8e5b9f9b58b8591e9186e3f0dbcf9ffb',1,'Biginteger']]]
+  ['mod_0',['Mod',['../class_biginteger.html#a70a556b9abf76ab8590a06537742646c',1,'Biginteger']]],
+  ['multiply_1',['Multiply',['../class_biginteger.html#a20bdc0cdbaebcf32061e30f5c9ce0218',1,'Biginteger']]]
 ];

@@ -13,8 +13,6 @@
 \item 
 \mbox{\hyperlink{class_biginteger_a9df141c0f08c604235dca2ad403e1b99}{Biginteger}} (string str)
 \item 
-\mbox{\hyperlink{class_biginteger_a6226edabfed468509ac46b47204bc8ea}{Biginteger}} (int len)
-\item 
 \mbox{\hyperlink{class_biginteger_a4058518547ee370dcc58d8223a3a23f7}{Biginteger}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&another)
 \item 
 \mbox{\Hypertarget{class_biginteger_afb19fb966d07c7fa30ac33820a66ace7}\label{class_biginteger_afb19fb966d07c7fa30ac33820a66ace7}} 
@@ -39,6 +37,9 @@ bool {\bfseries operator==} (const \mbox{\hyperlink{class_biginteger}{Biginteger
 \item 
 \mbox{\Hypertarget{class_biginteger_a946fc36660e8bafb337aad705a59e923}\label{class_biginteger_a946fc36660e8bafb337aad705a59e923}} 
 bool {\bfseries operator!=} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
+\item 
+\mbox{\Hypertarget{class_biginteger_a390bb62c521da004deb93dfd0cac1248}\label{class_biginteger_a390bb62c521da004deb93dfd0cac1248}} 
+int {\bfseries get\+Length} () const
 \item 
 \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a547544536451a2baa0c795e4465fa77f}{Negate}} () const
 \item 
@@ -71,12 +72,6 @@ bool {\bfseries operator!=} (const \mbox{\hyperlink{class_biginteger}{Biginteger
 \item 
 string \mbox{\hyperlink{class_biginteger_abb6179b40128fd3531dda1a50d0479fb}{to\+String}} () const
 \end{DoxyCompactItemize}
-\doxysubsection*{Public Attributes}
-\begin{DoxyCompactItemize}
-\item 
-\mbox{\Hypertarget{class_biginteger_a8e5b9f9b58b8591e9186e3f0dbcf9ffb}\label{class_biginteger_a8e5b9f9b58b8591e9186e3f0dbcf9ffb}} 
-int {\bfseries length}
-\begin{DoxyCompactList}\small\item\em The length of the big integer. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
@@ -91,7 +86,7 @@ It is a big integer class in C++.~\newline
 \end{DoxyEnumerate}
 \end{DoxyNote}
 \begin{DoxyVersion}{Version}
-1.\+0 beta2(1.\+0.\+211122) 
+1.\+0 (1.\+0.\+211208) 
 \end{DoxyVersion}
 
 
@@ -99,13 +94,13 @@ It is a big integer class in C++.~\newline
 \mbox{\Hypertarget{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}\label{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}} 
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+\doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
 {\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Construct an empty big integer with the length of 0. \mbox{\Hypertarget{class_biginteger_ae4615925f117a9633f8fc9f42ee8d318}\label{class_biginteger_ae4615925f117a9633f8fc9f42ee8d318}} 
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+\doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
 {\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}\item[{const char $\ast$}]{s }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Construct a big integer with a string constant 
@@ -121,7 +116,7 @@ Construct a big integer with a string constant
 \mbox{\Hypertarget{class_biginteger_a9df141c0f08c604235dca2ad403e1b99}\label{class_biginteger_a9df141c0f08c604235dca2ad403e1b99}} 
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+\doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
 {\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}\item[{string}]{str }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Construct a big integer with a string constant. Note that the parameter {\itshape std\+::string} will be converted to a C-\/style string constant. 
@@ -134,21 +129,10 @@ Construct a big integer with a string constant. Note that the parameter {\itshap
 {\em if} & the string constant {\bfseries{s}} is not a legal integer,throws \mbox{\hyperlink{class_number_format_exception}{Number\+Format\+Exception}}. \\
 \hline
 \end{DoxyExceptions}
-\mbox{\Hypertarget{class_biginteger_a6226edabfed468509ac46b47204bc8ea}\label{class_biginteger_a6226edabfed468509ac46b47204bc8ea}} 
-\index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
-\index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
-{\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}\item[{int}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-Construct an empty big integer with a specific length. 
-\begin{DoxyParams}{Parameters}
-{\em len} & length of the integer. \\
-\hline
-\end{DoxyParams}
 \mbox{\Hypertarget{class_biginteger_a4058518547ee370dcc58d8223a3a23f7}\label{class_biginteger_a4058518547ee370dcc58d8223a3a23f7}} 
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+\doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
 {\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{another }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Construct a big integer with another big integer(\+Copy constructor). 

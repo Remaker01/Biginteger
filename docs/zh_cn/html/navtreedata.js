@@ -32,8 +32,7 @@ var NAVTREE =
       [ "类继承关系", "hierarchy.html", "hierarchy" ],
       [ "类成员", "functions.html", [
         [ "全部", "functions.html", null ],
-        [ "函数", "functions_func.html", null ],
-        [ "变量", "functions_vars.html", null ]
+        [ "函数", "functions_func.html", null ]
       ] ]
     ] ],
     [ "文件", "files.html", [
