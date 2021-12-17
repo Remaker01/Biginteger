@@ -20,7 +20,7 @@ using std::string;
  * To increase the efficiency,the big integer will be divided into groups every eight digits.</li>
  * <li>In *complexity* of all functions, <em>n</em> represents the length of *this big integer*,and *m* represents the length of another one. *k=8* if there are
  * no special notes.
- * \version 1.0 (1.0.211208)
+ * \version 1.1 (1.1.211216)
  */
 class Biginteger {
   private:
@@ -30,13 +30,13 @@ class Biginteger {
     	data = new int[effLen]();
 	}
     //sign == 0:0；-1:负数；1：正数；2：无效，说明此尚未被正确构造，仍是空值
-    inline bool check(const char *s,int len) {
+    inline int check(const char *s,int len) {
         for(int i = 1; i < len; i++) {
-            if(!(s[i] >= '0'&&s[i] <= '9'))    return false;
+            if(!(s[i] >= '0'&&s[i] <= '9'))    return i;
         }
         //第一个是负号或数字，如果是负号，则长度必须大于一。后面的必须全部是数字。
-        if(s[0] == '-')	   return len != 1;
-        else	return s[0] >= '0'&&s[0] <= '9';
+        if(s[0] == '-')	   return (len != 1) ? -1 : 0;
+        else	return (s[0] >= '0'&&s[0] <= '9') ? -1 : 0;
     }
     /*删除前导0*/
     inline int firNoneZero(const char *s,int len) {
@@ -122,8 +122,8 @@ class Biginteger {
      */
     Biginteger(const char *s) {
         if(s == NULL)    throw NullException();
-        int len = strlen(s);
-        if(!check(s,len))    throw NumberFormatException();
+        int len = strlen(s),chkres=check(s,len);
+        if(chkres != -1)    throw NumberFormatException(s[chkres]);
         int loc = firNoneZero(s,len);
         eff_len = (len - loc + NUM_GROUP_SIZE -1) / NUM_GROUP_SIZE;
         data = new int[eff_len]();

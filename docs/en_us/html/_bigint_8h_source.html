@@ -25,7 +25,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Biginteger<span id="projectnumber">&#160;1.0</span>
+   <div id="projectname">Biginteger<span id="projectnumber">&#160;1.1</span>
    </div>
   </td>
  </tr>
@@ -104,13 +104,13 @@ $(document).ready(function(){initNavTree('_bigint_8h_source.html',''); initResiz
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        data = <span class="keyword">new</span> <span class="keywordtype">int</span>[effLen]();</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    }</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="comment">//sign == 0:0；-1:负数；1：正数；2：无效，说明此尚未被正确构造，仍是空值</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keyword">inline</span> <span class="keywordtype">bool</span> check(<span class="keyword">const</span> <span class="keywordtype">char</span> *s,<span class="keywordtype">int</span> len) {</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keyword">inline</span> <span class="keywordtype">int</span> check(<span class="keyword">const</span> <span class="keywordtype">char</span> *s,<span class="keywordtype">int</span> len) {</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 1; i &lt; len; i++) {</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>            <span class="keywordflow">if</span>(!(s[i] &gt;= <span class="charliteral">&#39;0&#39;</span>&amp;&amp;s[i] &lt;= <span class="charliteral">&#39;9&#39;</span>))    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>            <span class="keywordflow">if</span>(!(s[i] &gt;= <span class="charliteral">&#39;0&#39;</span>&amp;&amp;s[i] &lt;= <span class="charliteral">&#39;9&#39;</span>))    <span class="keywordflow">return</span> i;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        }</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        <span class="comment">//第一个是负号或数字，如果是负号，则长度必须大于一。后面的必须全部是数字。</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keywordflow">if</span>(s[0] == <span class="charliteral">&#39;-&#39;</span>)    <span class="keywordflow">return</span> len != 1;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="keywordflow">else</span>    <span class="keywordflow">return</span> s[0] &gt;= <span class="charliteral">&#39;0&#39;</span>&amp;&amp;s[0] &lt;= <span class="charliteral">&#39;9&#39;</span>;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keywordflow">if</span>(s[0] == <span class="charliteral">&#39;-&#39;</span>)    <span class="keywordflow">return</span> (len != 1) ? -1 : 0;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="keywordflow">else</span>    <span class="keywordflow">return</span> (s[0] &gt;= <span class="charliteral">&#39;0&#39;</span>&amp;&amp;s[0] &lt;= <span class="charliteral">&#39;9&#39;</span>) ? -1 : 0;</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    }</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="comment">/*删除前导0*/</span></div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keyword">inline</span> <span class="keywordtype">int</span> firNoneZero(<span class="keyword">const</span> <span class="keywordtype">char</span> *s,<span class="keywordtype">int</span> len) {</div>
@@ -188,8 +188,8 @@ $(document).ready(function(){initNavTree('_bigint_8h_source.html',''); initResiz
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno"><a class="line" href="class_biginteger.html#a21756d968ef9ac08e3731cae5f8fe502">  117</a></span>    <a class="code hl_function" href="class_biginteger.html#a21756d968ef9ac08e3731cae5f8fe502">Biginteger</a>():data(NULL),eff_len(0),sign(2) {}</div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno"><a class="line" href="class_biginteger.html#ae4615925f117a9633f8fc9f42ee8d318">  123</a></span>    <a class="code hl_function" href="class_biginteger.html#ae4615925f117a9633f8fc9f42ee8d318">Biginteger</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *s) {</div>
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        <span class="keywordflow">if</span>(s == NULL)    <span class="keywordflow">throw</span> <a class="code hl_class" href="class_null_exception.html">NullException</a>();</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        <span class="keywordtype">int</span> len = strlen(s);</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        <span class="keywordflow">if</span>(!check(s,len))    <span class="keywordflow">throw</span> <a class="code hl_class" href="class_number_format_exception.html">NumberFormatException</a>();</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        <span class="keywordtype">int</span> len = strlen(s),chkres=check(s,len);</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        <span class="keywordflow">if</span>(chkres != -1)    <span class="keywordflow">throw</span> <a class="code hl_class" href="class_number_format_exception.html">NumberFormatException</a>(s[chkres]);</div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        <span class="keywordtype">int</span> loc = firNoneZero(s,len);</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        eff_len = (len - loc + NUM_GROUP_SIZE -1) / NUM_GROUP_SIZE;</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        data = <span class="keyword">new</span> <span class="keywordtype">int</span>[eff_len]();</div>
@@ -439,8 +439,8 @@ $(document).ready(function(){initNavTree('_bigint_8h_source.html',''); initResiz
 <div class="ttc" id="aclass_biginteger_html_a9df141c0f08c604235dca2ad403e1b99"><div class="ttname"><a href="class_biginteger.html#a9df141c0f08c604235dca2ad403e1b99">Biginteger::Biginteger</a></div><div class="ttdeci">Biginteger(string str)</div><div class="ttdef"><b>Definition:</b> Bigint.h:145</div></div>
 <div class="ttc" id="aclass_biginteger_html_abb6179b40128fd3531dda1a50d0479fb"><div class="ttname"><a href="class_biginteger.html#abb6179b40128fd3531dda1a50d0479fb">Biginteger::toString</a></div><div class="ttdeci">string toString() const</div><div class="ttdef"><b>Definition:</b> Bigint.h:390</div></div>
 <div class="ttc" id="aclass_biginteger_html_ae4615925f117a9633f8fc9f42ee8d318"><div class="ttname"><a href="class_biginteger.html#ae4615925f117a9633f8fc9f42ee8d318">Biginteger::Biginteger</a></div><div class="ttdeci">Biginteger(const char *s)</div><div class="ttdef"><b>Definition:</b> Bigint.h:123</div></div>
-<div class="ttc" id="aclass_div_by_zero_exception_html"><div class="ttname"><a href="class_div_by_zero_exception.html">DivByZeroException</a></div><div class="ttdef"><b>Definition:</b> Exceptions.h:19</div></div>
-<div class="ttc" id="aclass_null_exception_html"><div class="ttname"><a href="class_null_exception.html">NullException</a></div><div class="ttdef"><b>Definition:</b> Exceptions.h:29</div></div>
+<div class="ttc" id="aclass_div_by_zero_exception_html"><div class="ttname"><a href="class_div_by_zero_exception.html">DivByZeroException</a></div><div class="ttdef"><b>Definition:</b> Exceptions.h:29</div></div>
+<div class="ttc" id="aclass_null_exception_html"><div class="ttname"><a href="class_null_exception.html">NullException</a></div><div class="ttdef"><b>Definition:</b> Exceptions.h:39</div></div>
 <div class="ttc" id="aclass_number_format_exception_html"><div class="ttname"><a href="class_number_format_exception.html">NumberFormatException</a></div><div class="ttdef"><b>Definition:</b> Exceptions.h:9</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

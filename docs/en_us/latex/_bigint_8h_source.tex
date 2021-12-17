@@ -21,13 +21,13 @@
 \DoxyCodeLine{30         data = \textcolor{keyword}{new} \textcolor{keywordtype}{int}[effLen]();}
 \DoxyCodeLine{31     \}}
 \DoxyCodeLine{32     \textcolor{comment}{//sign == 0:0；-\/1:负数；1：正数；2：无效，说明此尚未被正确构造，仍是空值}}
-\DoxyCodeLine{33     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} check(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s,\textcolor{keywordtype}{int} len) \{}
+\DoxyCodeLine{33     \textcolor{keyword}{inline} \textcolor{keywordtype}{int} check(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s,\textcolor{keywordtype}{int} len) \{}
 \DoxyCodeLine{34         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 1; i < len; i++) \{}
-\DoxyCodeLine{35             \textcolor{keywordflow}{if}(!(s[i] >= \textcolor{charliteral}{'0'}\&\&s[i] <= \textcolor{charliteral}{'9'}))    \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{35             \textcolor{keywordflow}{if}(!(s[i] >= \textcolor{charliteral}{'0'}\&\&s[i] <= \textcolor{charliteral}{'9'}))    \textcolor{keywordflow}{return} i;}
 \DoxyCodeLine{36         \}}
 \DoxyCodeLine{37         \textcolor{comment}{//第一个是负号或数字，如果是负号，则长度必须大于一。后面的必须全部是数字。}}
-\DoxyCodeLine{38         \textcolor{keywordflow}{if}(s[0] == \textcolor{charliteral}{'-\/'})    \textcolor{keywordflow}{return} len != 1;}
-\DoxyCodeLine{39         \textcolor{keywordflow}{else}    \textcolor{keywordflow}{return} s[0] >= \textcolor{charliteral}{'0'}\&\&s[0] <= \textcolor{charliteral}{'9'};}
+\DoxyCodeLine{38         \textcolor{keywordflow}{if}(s[0] == \textcolor{charliteral}{'-\/'})    \textcolor{keywordflow}{return} (len != 1) ? -\/1 : 0;}
+\DoxyCodeLine{39         \textcolor{keywordflow}{else}    \textcolor{keywordflow}{return} (s[0] >= \textcolor{charliteral}{'0'}\&\&s[0] <= \textcolor{charliteral}{'9'}) ? -\/1 : 0;}
 \DoxyCodeLine{40     \}}
 \DoxyCodeLine{41     \textcolor{comment}{/*删除前导0*/}}
 \DoxyCodeLine{42     \textcolor{keyword}{inline} \textcolor{keywordtype}{int} firNoneZero(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s,\textcolor{keywordtype}{int} len) \{}
@@ -105,8 +105,8 @@
 \DoxyCodeLine{117     \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}():data(NULL),eff\_len(0),sign(2) \{\}}
 \DoxyCodeLine{123     \mbox{\hyperlink{class_biginteger_ae4615925f117a9633f8fc9f42ee8d318}{Biginteger}}(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s) \{}
 \DoxyCodeLine{124         \textcolor{keywordflow}{if}(s == NULL)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
-\DoxyCodeLine{125         \textcolor{keywordtype}{int} len = strlen(s);}
-\DoxyCodeLine{126         \textcolor{keywordflow}{if}(!check(s,len))    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_number_format_exception}{NumberFormatException}}();}
+\DoxyCodeLine{125         \textcolor{keywordtype}{int} len = strlen(s),chkres=check(s,len);}
+\DoxyCodeLine{126         \textcolor{keywordflow}{if}(chkres != -\/1)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_number_format_exception}{NumberFormatException}}(s[chkres]);}
 \DoxyCodeLine{127         \textcolor{keywordtype}{int} loc = firNoneZero(s,len);}
 \DoxyCodeLine{128         eff\_len = (len -\/ loc + NUM\_GROUP\_SIZE -\/1) / NUM\_GROUP\_SIZE;}
 \DoxyCodeLine{129         data = \textcolor{keyword}{new} \textcolor{keywordtype}{int}[eff\_len]();}

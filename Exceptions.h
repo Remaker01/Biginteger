@@ -1,15 +1,25 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 #include <stdexcept>
-using std::exception;  //±ðÍüÁË¼Óusing£¡
+#include <cstdio>
+using std::exception;
 /**
  * Throws if the string constant contains any non-digit character(s)
  */
 
 class NumberFormatException : public exception {
+	char *info;
 public:
+	NumberFormatException() {
+		info = new char[18]();
+		sprintf(info,"Wrong Character.");
+	}
+	NumberFormatException(char ch) {
+		info = new char[20]();
+		sprintf(info,"Wrong Character: %c",ch);
+	}
     const char *what() const throw() {
-        return "Wrong Character.";
+        return info;
     }
 };
 
