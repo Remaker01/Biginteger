@@ -82,11 +82,11 @@ It is a big integer class in C++.~\newline
 
 \begin{DoxyEnumerate}
 \item This class provides an internal attribute(which is a pointer to {\itshape int}) to store the big integer. To increase the efficiency,the big integer will be divided into groups every eight digits. 
-\item In {\itshape complexity} of all functions, {\itshape n} represents the length of {\itshape this big integer},and {\itshape m} represents the length of another one. {\itshape k=8} if there are no special notes. 
+\item In {\itshape complexity} of all functions\+:if there are no special notes,{\itshape n} represents the length of {\itshape this,and $\ast$m} represents the length of another one, and {\itshape k=8}. 
 \end{DoxyEnumerate}
 \end{DoxyNote}
 \begin{DoxyVersion}{版本}
-1.\+1 (1.\+1.\+211216) 
+1.\+10 (1.\+10.\+211226) 
 \end{DoxyVersion}
 
 
@@ -145,7 +145,7 @@ Construct a big integer with another big integer(\+Copy constructor).
 {\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::absolute (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 Find the absolute value of the big integer. \begin{DoxyReturn}{返回}
-the result. 
+the result($\vert$$\ast$this$\vert$). 
 \end{DoxyReturn}
 \mbox{\Hypertarget{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}\label{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}} 
 \index{Biginteger@{Biginteger}!Add@{Add}}
@@ -154,13 +154,13 @@ the result.
 {\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Add (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 Add the integer with another one.\+Using {\bfseries{operator+}} has the same effect.~\newline
- {\bfseries{Complexity}}\+:O(max(n,m)/k). 
+ {\bfseries{Complexity}}\+:O(max(n,m) / k). 
 \begin{DoxyParams}{参数}
 {\em a} & another big integer. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{返回}
-the result.~\newline
+the result(($\ast$this) + a).~\newline
  
 \end{DoxyReturn}
 \mbox{\Hypertarget{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}\label{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}} 
@@ -189,7 +189,7 @@ Divide the integer by another one.\+Using {\bfseries{operator/ }}has the same ef
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{返回}
-the result. 
+the result(($\ast$this) / a). 
 \end{DoxyReturn}
 
 \begin{DoxyExceptions}{异常}
@@ -211,7 +211,7 @@ Find the remainder of this integer to another one.\+Using {\bfseries{operator\%}
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{返回}
-the result. 
+the result(($\ast$this) mod a). 
 \end{DoxyReturn}
 
 \begin{DoxyExceptions}{异常}
@@ -230,22 +230,30 @@ In other cases,the result will be positive.
 {\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Multiply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 Multiply this integer by another one.~\newline
- {\bfseries{Complexity}}\+:O(nm/(k$^\wedge$2)). 
+ {\bfseries{Complexity}}\+: 
+
+The multiplication uses two algorithms
+
+
+\begin{DoxyEnumerate}
+\item If the length of the arrays storing both factors are greater than KARA\+\_\+\+THRESHOLD, the Karatsuba multiplication is used. In this condition,the complexity is around O(n$^\wedge$(1.\+58)),with {\itshape n}represents the length of the bigger factor. 
+\item Otherwise,the classic multiplication which behaves alike vertical multiplication you learned in the elementary school is used. In this condition,the complexity is around O(nm / k) 
 \begin{DoxyParams}{参数}
 {\em a} & another big integer. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{返回}
-the result. 
+the result(($\ast$this) $\ast$ a). 
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_biginteger_a547544536451a2baa0c795e4465fa77f}\label{class_biginteger_a547544536451a2baa0c795e4465fa77f}} 
+
+\end{DoxyEnumerate}\mbox{\Hypertarget{class_biginteger_a547544536451a2baa0c795e4465fa77f}\label{class_biginteger_a547544536451a2baa0c795e4465fa77f}} 
 \index{Biginteger@{Biginteger}!Negate@{Negate}}
 \index{Negate@{Negate}!Biginteger@{Biginteger}}
 \doxysubsubsection{\texorpdfstring{Negate()}{Negate()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Negate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 Find the opposite number of the big integer. \begin{DoxyReturn}{返回}
-the result. 
+the result(-\/($\ast$this)). 
 \end{DoxyReturn}
 \mbox{\Hypertarget{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}\label{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}} 
 \index{Biginteger@{Biginteger}!Subt@{Subt}}
@@ -254,13 +262,13 @@ the result.
 {\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Subt (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 Subtract another integer from the integer.\+Using {\bfseries{operator-\/}} has the same effect.~\newline
- {\bfseries{Complexity}}\+:O(max(n,m)/k). 
+ {\bfseries{Complexity}}\+:O(max(n,m) / k). 
 \begin{DoxyParams}{参数}
 {\em a} & another big integer. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{返回}
-the result.~\newline
+the result(($\ast$this) -\/ a).~\newline
  
 \end{DoxyReturn}
 \mbox{\Hypertarget{class_biginteger_abb6179b40128fd3531dda1a50d0479fb}\label{class_biginteger_abb6179b40128fd3531dda1a50d0479fb}} 

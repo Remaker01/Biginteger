@@ -5,10 +5,8 @@
 #include <algorithm>
 #include <cmath>
 #include "Exceptions.h"
-#define NUM_GROUP_SIZE 8
-#define MOD_BASE 100000000
 using std::string;
-
+static const int NUM_GROUP_SIZE = 8,MOD_BASE = (int)1e8,KARA_THRESHOLD = 128;
 /**
  * It is a big integer class in C++.<br>
  * Since the C++ standard library has no big integer classes,I wrote this IMMATURE Biginteger class which
@@ -18,18 +16,19 @@ using std::string;
  * All comments and suggestions beneficial to this project are welcome.
  * \note <ol><li>This class provides an internal attribute(which is a pointer to <em>int</em>) to store the big integer.
  * To increase the efficiency,the big integer will be divided into groups every eight digits.</li>
- * <li>In *complexity* of all functions, <em>n</em> represents the length of *this big integer*,and *m* represents the length of another one. *k=8* if there are
- * no special notes.
- * \version 1.1 (1.1.211216)
+ * <li>In *complexity* of all functions:if there are no special notes,<em>n</em> represents the length of *this,and *m* represents 
+ * the length of another one, and *k=8*.
+ * \version 1.10 (1.10.211226)
  */
 class Biginteger {
   private:
     int *data;
+    //sign == 0:0；-1:负数；1：正数；2：无效，说明此尚未被正确构造，仍是空值
     int eff_len,sign;
+    //构造有效长度为effLen位的Biginteger
     Biginteger(int effLen):eff_len(0),sign(2) {
     	data = new int[effLen]();
 	}
-    //sign == 0:0；-1:负数；1：正数；2：无效，说明此尚未被正确构造，仍是空值
     inline int check(const char *s,int len) {
         for(int i = 1; i < len; i++) {
             if(!(s[i] >= '0'&&s[i] <= '9'))    return i;
@@ -57,19 +56,19 @@ class Biginteger {
         }
     }
     /*处理加法剩下的位数。a为位数较多的数*/
-    inline void addLefts(const Biginteger &a,Biginteger &res,bool &carry,int minlen) const {
+    inline void addLefts(const Biginteger &a,bool &carry,int minlen) {
         for(int i = minlen; i < a.eff_len; i++) {
             int now = a.data[i] + carry;
-            res.data[res.eff_len++] = now % MOD_BASE;
+            data[eff_len++] = now % MOD_BASE;
             carry = (bool)(now / MOD_BASE);
         }
     }
-    inline void removeZero(Biginteger &a) const {
-        while(a.data[a.eff_len - 1] == 0&&a.eff_len > 1)
-            a.eff_len--;
+    inline void removeZero() {
+        while(data[eff_len - 1] == 0&&eff_len > 1)
+            eff_len--;
     }
     /*处理减法。在此处提供统一接口是因为结果可正可负*/
-    Biginteger general_subt(const Biginteger &large,const Biginteger &small) const {
+    Biginteger subt(const Biginteger &large,const Biginteger &small) const {
         bool carry = 0;  //退位
         Biginteger ret(large.eff_len);
         for(int i = 0; i < small.eff_len; i++) {
@@ -92,7 +91,7 @@ class Biginteger {
         }
         //前导零的特殊处理。注意a==b的特殊情况
         //注意：由于上面统一用位数较多数的位数初始化，所以此处可能不知要删1个
-        removeZero(ret);      
+        ret.removeZero();      
         return ret;
     }
     //除以2，方便除法时使用二分。
@@ -107,8 +106,74 @@ class Biginteger {
             ret.data[i] = now;
             carry = data[i] & 1;
         }
-        removeZero(ret);
+        ret.removeZero();
         return ret;
+    }
+      //取得低位 
+    Biginteger getLower(int len) const {
+    	if(len <= 0)	return Biginteger("0");
+        if(len >= eff_len)    return *this;
+        Biginteger ret(len);
+        ret.eff_len = len;
+        ret.sign = 1;
+        for(int i = 0; i < len; i++) {
+            ret.data[i] = data[i];
+        }
+        return ret; 
+    }
+	//取得高位，自动补0
+    Biginteger getUpper(int len) const {
+    	if(len <= 0)	return Biginteger("0");
+        if(len >= eff_len)    return *this;
+        Biginteger ret(len);
+        ret.eff_len = len;
+        ret.sign = 1;
+        int dif = eff_len - len;
+        for(int i = 0; i < len; i++) {
+            ret.data[i] = data[i + dif];
+        }
+        ret.removeZero();
+        return ret;
+    }
+    Biginteger addZero(unsigned int n) const {
+        int len = eff_len + n;
+        Biginteger ret(len);
+        ret.eff_len = len;
+        ret.sign = sign;
+        for(int i = eff_len - 1; i >= 0; i--) {
+            ret.data[i + n] = data[i];
+        }
+        return ret;
+    }
+    Biginteger classicMul(const Biginteger &a) const {
+    	int aLen = a.eff_len;
+        Biginteger ret(eff_len + aLen);  //存放结果
+        
+		ret.eff_len = eff_len + aLen - 1;
+        for(int i = 0; i < eff_len; i++) {  //this
+            int carry = 0;
+            for(int j = 0; j < aLen; j++) {  //a
+                long long now = (long long)data[i] * a.data[j] + carry + ret.data[i + j];
+                carry = now / MOD_BASE;
+                ret.data[i + j]=now % MOD_BASE;
+            }
+            if(carry != 0)    ret.data[i + aLen] = carry;
+        }
+        if(ret.data[eff_len + aLen - 1] != 0)
+        	ret.eff_len++;
+        ret.removeZero();
+        return ret;
+    }
+    //Karatsuba乘法
+    Biginteger Karatsuba(const Biginteger &a) const {
+        int half = (std::max(eff_len,a.eff_len) + 1) / 2;
+        Biginteger xh = getUpper(eff_len - half),xl = getLower(half);  //第一个因数 
+        Biginteger yh = a.getUpper(a.eff_len - half),yl = a.getLower(half); //第二个因数
+        //pl=xl * yl  ph=xh * yh
+        Biginteger pl = xl.Multiply(yl);
+		Biginteger ph = xh.Multiply(yh);
+		//res= pl + ph * MOD_BASE^(half * 2) + ((xl + xh)(yl + yh) - pl - ph) * MOD_BASE(half)
+        return pl + ph.addZero(half * 2) + ((xl + xh).Multiply(yl + yh) - pl - ph).addZero(half);
     }
   public:
     /**
@@ -216,7 +281,7 @@ class Biginteger {
     }
     /**
      * Find the opposite number of the big integer.
-     * \return the result.
+     * \return the result(-(*this)).
      */
     Biginteger Negate() const{
         if(sign == 2)    throw NullException();
@@ -225,7 +290,7 @@ class Biginteger {
         return ret;
     }
     /** Find the absolute value of the big integer.
-     * \return the result.
+     * \return the result(|*this|).
      */
      Biginteger absolute() const{
         if(sign == 2)    throw NullException();
@@ -234,9 +299,9 @@ class Biginteger {
      }
     /**
      * Add the integer with another one.Using **operator+** has the same effect.<br>
-     * **Complexity**:O(max(n,m)/k).
+     * **Complexity**:O(max(n,m) / k).
      * \param a another big integer.
-     * \return the result.<br>
+     * \return the result((*this) + a).<br>
      */
     Biginteger Add(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
@@ -260,8 +325,8 @@ class Biginteger {
             ret.data[ret.eff_len++] = now % MOD_BASE;
             carry = (bool)(now / MOD_BASE);
 		}
-		if(minlen == eff_len)    addLefts(a,ret,carry,minlen);
-		else    addLefts(*this,ret,carry,minlen);
+		if(minlen == eff_len)    ret.addLefts(a,carry,minlen);
+		else    ret.addLefts(*this,carry,minlen);
 		//处理多余进位
 		if(carry != 0)   ret.data[ret.eff_len++] = 1;
         //(0,0)
@@ -275,9 +340,9 @@ class Biginteger {
     Biginteger operator+ (const Biginteger &a) const {return Add(a);}
     /**
      * Subtract another integer from the integer.Using **operator-** has the same effect.<br>
-     * **Complexity**:O(max(n,m)/k).
+     * **Complexity**:O(max(n,m) / k).
      * \param a another big integer.
-     * \return the result.<br>
+     * \return the result((*this) - a).<br>
      */
     Biginteger Subt(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
@@ -305,44 +370,37 @@ class Biginteger {
         if(tmp == -1) {
             std::swap(suber,subee);
         }
-        Biginteger ret(general_subt(suber,subee));
+        Biginteger ret(subt(suber,subee));
         ret.sign = tmp;
         return ret;
     }
     Biginteger operator- (const Biginteger &a) const {return Subt(a);}
     /**
      * Multiply this integer by another one.<br>
-     * **Complexity**:O(nm/(k^2)).
+     * **Complexity**:
+     * <p>The multiplication uses two algorithms</p>
+     * <ol><li>If the length of the arrays storing both factors are greater than KARA_THRESHOLD, the Karatsuba multiplication is used.
+     * In this condition,the complexity is around O(n^(1.58)),with <em>n</em>represents the length of the bigger factor.</li>
+     * <li>Otherwise,the classic multiplication which behaves alike vertical multiplication you learned in the elementary school is used.
+     * In this condition,the complexity is around O(nm / k)
      * \param a another big integer.
-     * \return the result.
+     * \return the result((*this) * a).
      */
     Biginteger Multiply(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
         if(sign == 0||a.sign == 0)    return Biginteger("0");
-        int aLen = a.eff_len;
-        Biginteger ret(eff_len + a.eff_len);  //存放结果
-        
-		ret.eff_len = eff_len + aLen - 1;
-        for(int i = 0; i < eff_len; i++) {  //本数
-            int carry = 0;
-            for(int j = 0; j < aLen; j++) {  //a
-                long long now = (long long)data[i] * a.data[j] + carry + ret.data[i + j];
-                carry = now / MOD_BASE;
-                ret.data[i + j]=now % MOD_BASE;
-            }
-            if(carry != 0)    ret.data[i + aLen] = carry;
-        }
-        if(ret.data[eff_len + aLen] != 0)
-        	ret.eff_len++;
+        Biginteger ret;
+        if(eff_len > KARA_THRESHOLD&&a.eff_len > KARA_THRESHOLD)
+            ret = Karatsuba(a);
+        else    ret = classicMul(a);
         ret.sign = (sign == a.sign) ? 1 : -1;
-        removeZero(ret);
         return ret;
     }
     Biginteger operator* (const Biginteger &a) const {return Multiply(a);}
     /**
      * Divide the integer by another one.Using <strong>operator/ </strong>has the same effect.
      * \param a the divisor.
-     * \return the result.
+     * \return the result((*this) / a).
      * \throws <em>DivByZeroException</em> if the divisor is zero.
      * \note <em>Experimental</em>.
      */
@@ -372,7 +430,7 @@ class Biginteger {
     /**
      * Find the remainder of this integer to another one.Using **operator%** has the same effect.
      * \param a the divisor.
-     * \return the result.
+     * \return the result((*this) mod a).
      * \throws <em>DivByZeroException</em> if the divisor is zero.
      * \note <em>Experimental</em>.
      * <br>If dividend is negative,the result will be negative.

@@ -9,338 +9,391 @@
 \DoxyCodeLine{5 \textcolor{preprocessor}{\#include <algorithm>}}
 \DoxyCodeLine{6 \textcolor{preprocessor}{\#include <cmath>}}
 \DoxyCodeLine{7 \textcolor{preprocessor}{\#include "{}Exceptions.h"{}}}
-\DoxyCodeLine{8 \textcolor{preprocessor}{\#define NUM\_GROUP\_SIZE 8}}
-\DoxyCodeLine{9 \textcolor{preprocessor}{\#define MOD\_BASE 100000000}}
-\DoxyCodeLine{10 \textcolor{keyword}{using} std::string;}
-\DoxyCodeLine{11 }
-\DoxyCodeLine{25 \textcolor{keyword}{class }\mbox{\hyperlink{class_biginteger}{Biginteger}} \{}
-\DoxyCodeLine{26   \textcolor{keyword}{private}:}
-\DoxyCodeLine{27     \textcolor{keywordtype}{int} *data;}
-\DoxyCodeLine{28     \textcolor{keywordtype}{int} eff\_len,sign;}
+\DoxyCodeLine{8 \textcolor{keyword}{using} std::string;}
+\DoxyCodeLine{9 \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{int} NUM\_GROUP\_SIZE = 8,MOD\_BASE = (int)1e8,KARA\_THRESHOLD = 128;}
+\DoxyCodeLine{23 \textcolor{keyword}{class }\mbox{\hyperlink{class_biginteger}{Biginteger}} \{}
+\DoxyCodeLine{24   \textcolor{keyword}{private}:}
+\DoxyCodeLine{25     \textcolor{keywordtype}{int} *data;}
+\DoxyCodeLine{26     \textcolor{comment}{//sign == 0:0；-\/1:负数；1：正数；2：无效，说明此尚未被正确构造，仍是空值}}
+\DoxyCodeLine{27     \textcolor{keywordtype}{int} eff\_len,sign;}
+\DoxyCodeLine{28     \textcolor{comment}{//构造有效长度为effLen位的Biginteger}}
 \DoxyCodeLine{29     \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(\textcolor{keywordtype}{int} effLen):eff\_len(0),sign(2) \{}
 \DoxyCodeLine{30         data = \textcolor{keyword}{new} \textcolor{keywordtype}{int}[effLen]();}
 \DoxyCodeLine{31     \}}
-\DoxyCodeLine{32     \textcolor{comment}{//sign == 0:0；-\/1:负数；1：正数；2：无效，说明此尚未被正确构造，仍是空值}}
-\DoxyCodeLine{33     \textcolor{keyword}{inline} \textcolor{keywordtype}{int} check(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s,\textcolor{keywordtype}{int} len) \{}
-\DoxyCodeLine{34         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 1; i < len; i++) \{}
-\DoxyCodeLine{35             \textcolor{keywordflow}{if}(!(s[i] >= \textcolor{charliteral}{'0'}\&\&s[i] <= \textcolor{charliteral}{'9'}))    \textcolor{keywordflow}{return} i;}
-\DoxyCodeLine{36         \}}
-\DoxyCodeLine{37         \textcolor{comment}{//第一个是负号或数字，如果是负号，则长度必须大于一。后面的必须全部是数字。}}
-\DoxyCodeLine{38         \textcolor{keywordflow}{if}(s[0] == \textcolor{charliteral}{'-\/'})    \textcolor{keywordflow}{return} (len != 1) ? -\/1 : 0;}
-\DoxyCodeLine{39         \textcolor{keywordflow}{else}    \textcolor{keywordflow}{return} (s[0] >= \textcolor{charliteral}{'0'}\&\&s[0] <= \textcolor{charliteral}{'9'}) ? -\/1 : 0;}
-\DoxyCodeLine{40     \}}
-\DoxyCodeLine{41     \textcolor{comment}{/*删除前导0*/}}
-\DoxyCodeLine{42     \textcolor{keyword}{inline} \textcolor{keywordtype}{int} firNoneZero(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s,\textcolor{keywordtype}{int} len) \{}
-\DoxyCodeLine{43         \textcolor{keywordtype}{int} i;}
-\DoxyCodeLine{44         \textcolor{keywordflow}{for}(i = (s[0] == \textcolor{charliteral}{'-\/'}) ? 1 : 0; i < len -\/ 1\&\&s[i] == \textcolor{charliteral}{'0'}; i++);}
-\DoxyCodeLine{45         \textcolor{keywordflow}{return} i;}
-\DoxyCodeLine{46     \}}
-\DoxyCodeLine{47     \textcolor{comment}{/*转换为int数组，方便乘法与加法运算*/}}
-\DoxyCodeLine{48     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} convert(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s,\textcolor{keywordtype}{int} len) \{}
-\DoxyCodeLine{49         \textcolor{keywordtype}{int} k = 0,mini = (s[0] == \textcolor{charliteral}{'-\/'}) ? 1 : 0;}
-\DoxyCodeLine{50         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = len-\/1; i >= mini; i -\/= NUM\_GROUP\_SIZE) \{}
-\DoxyCodeLine{51             \textcolor{keywordtype}{int} now = 0;}
-\DoxyCodeLine{52             \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} j = i -\/ (NUM\_GROUP\_SIZE -\/ 1); j <= i; j++) \{}
-\DoxyCodeLine{53                 \textcolor{keywordflow}{if}(j < mini)    \textcolor{keywordflow}{continue};}
-\DoxyCodeLine{54                 now = now * 10 + (s[j] -\/ \textcolor{charliteral}{'0'});}
-\DoxyCodeLine{55             \}}
-\DoxyCodeLine{56             data[k++] = now;}
-\DoxyCodeLine{57         \}}
-\DoxyCodeLine{58     \}}
-\DoxyCodeLine{59     \textcolor{comment}{/*处理加法剩下的位数。a为位数较多的数*/}}
-\DoxyCodeLine{60     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} addLefts(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a,\mbox{\hyperlink{class_biginteger}{Biginteger}} \&res,\textcolor{keywordtype}{bool} \&carry,\textcolor{keywordtype}{int} minlen)\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{61         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = minlen; i < a.eff\_len; i++) \{}
-\DoxyCodeLine{62             \textcolor{keywordtype}{int} now = a.data[i] + carry;}
-\DoxyCodeLine{63             res.data[res.eff\_len++] = now \% MOD\_BASE;}
-\DoxyCodeLine{64             carry = (bool)(now / MOD\_BASE);}
-\DoxyCodeLine{65         \}}
-\DoxyCodeLine{66     \}}
-\DoxyCodeLine{67     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} removeZero(\mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{68         \textcolor{keywordflow}{while}(a.data[a.eff\_len -\/ 1] == 0\&\&a.eff\_len > 1)}
-\DoxyCodeLine{69             a.eff\_len-\/-\/;}
-\DoxyCodeLine{70     \}}
-\DoxyCodeLine{71     \textcolor{comment}{/*处理减法。在此处提供统一接口是因为结果可正可负*/}}
-\DoxyCodeLine{72     \mbox{\hyperlink{class_biginteger}{Biginteger}} general\_subt(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&large,\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&small)\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{73         \textcolor{keywordtype}{bool} carry = 0;  \textcolor{comment}{//退位}}
-\DoxyCodeLine{74         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(large.eff\_len);}
-\DoxyCodeLine{75         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < small.eff\_len; i++) \{}
-\DoxyCodeLine{76             \textcolor{keywordtype}{int} now = large.data[i] -\/ small.data[i] -\/ carry;}
-\DoxyCodeLine{77             \textcolor{keywordflow}{if}(now < 0) \{}
-\DoxyCodeLine{78                 carry = 1;}
-\DoxyCodeLine{79                 now = MOD\_BASE + now;}
-\DoxyCodeLine{80             \}}
-\DoxyCodeLine{81             \textcolor{keywordflow}{else}    carry = 0;}
-\DoxyCodeLine{82             ret.data[ret.eff\_len++] = now;}
-\DoxyCodeLine{83         \}\textcolor{comment}{//处理后面几位}}
-\DoxyCodeLine{84         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = small.eff\_len; i < large.eff\_len; i++) \{}
-\DoxyCodeLine{85             \textcolor{keywordtype}{int} now = large.data[i] -\/ carry;}
-\DoxyCodeLine{86             \textcolor{keywordflow}{if}(now < 0) \{}
-\DoxyCodeLine{87                 carry = 1;}
-\DoxyCodeLine{88                 now = MOD\_BASE + now;}
-\DoxyCodeLine{89             \}}
-\DoxyCodeLine{90             \textcolor{keywordflow}{else}    carry = 0;}
-\DoxyCodeLine{91             ret.data[ret.eff\_len++] = now;}
-\DoxyCodeLine{92         \}}
-\DoxyCodeLine{93         \textcolor{comment}{//前导零的特殊处理。注意a==b的特殊情况}}
-\DoxyCodeLine{94         \textcolor{comment}{//注意：由于上面统一用位数较多数的位数初始化，所以此处可能不知要删1个}}
-\DoxyCodeLine{95         removeZero(ret);      }
-\DoxyCodeLine{96         \textcolor{keywordflow}{return} ret;}
-\DoxyCodeLine{97     \}}
-\DoxyCodeLine{98     \textcolor{comment}{//除以2，方便除法时使用二分。}}
-\DoxyCodeLine{99     \mbox{\hyperlink{class_biginteger}{Biginteger}} divByTwo()\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{100         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(*\textcolor{keyword}{this});}
-\DoxyCodeLine{101         \textcolor{keywordtype}{bool} carry = 0; \textcolor{comment}{//进位指示器}}
-\DoxyCodeLine{102         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = eff\_len -\/ 1; i >= 0; i-\/-\/) \{}
-\DoxyCodeLine{103             \textcolor{keywordtype}{int} now = data[i] >> 1;}
-\DoxyCodeLine{104             \textcolor{keywordflow}{if}(carry) \{}
-\DoxyCodeLine{105                 now = (now + (MOD\_BASE >> 1)) \% MOD\_BASE;}
-\DoxyCodeLine{106             \}}
-\DoxyCodeLine{107             ret.data[i] = now;}
-\DoxyCodeLine{108             carry = data[i] \& 1;}
-\DoxyCodeLine{109         \}}
-\DoxyCodeLine{110         removeZero(ret);}
-\DoxyCodeLine{111         \textcolor{keywordflow}{return} ret;}
-\DoxyCodeLine{112     \}}
-\DoxyCodeLine{113   \textcolor{keyword}{public}:}
-\DoxyCodeLine{117     \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}():data(NULL),eff\_len(0),sign(2) \{\}}
-\DoxyCodeLine{123     \mbox{\hyperlink{class_biginteger_ae4615925f117a9633f8fc9f42ee8d318}{Biginteger}}(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s) \{}
-\DoxyCodeLine{124         \textcolor{keywordflow}{if}(s == NULL)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
-\DoxyCodeLine{125         \textcolor{keywordtype}{int} len = strlen(s),chkres=check(s,len);}
-\DoxyCodeLine{126         \textcolor{keywordflow}{if}(chkres != -\/1)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_number_format_exception}{NumberFormatException}}(s[chkres]);}
-\DoxyCodeLine{127         \textcolor{keywordtype}{int} loc = firNoneZero(s,len);}
-\DoxyCodeLine{128         eff\_len = (len -\/ loc + NUM\_GROUP\_SIZE -\/1) / NUM\_GROUP\_SIZE;}
-\DoxyCodeLine{129         data = \textcolor{keyword}{new} \textcolor{keywordtype}{int}[eff\_len]();}
-\DoxyCodeLine{130         sign = (s[0] == \textcolor{charliteral}{'-\/'}) ? -\/1 : 1;}
-\DoxyCodeLine{131         \textcolor{comment}{//0的特殊处理}}
-\DoxyCodeLine{132         \textcolor{keywordflow}{if}(strcmp(s + loc,\textcolor{stringliteral}{"{}0"{}}) == 0||strcmp(s + loc,\textcolor{stringliteral}{"{}-\/0"{}}) == 0) \{}
-\DoxyCodeLine{133             data[0] = 0;}
-\DoxyCodeLine{134             sign = 0;}
-\DoxyCodeLine{135         \}}
-\DoxyCodeLine{136         \textcolor{comment}{//注 长度不是原来的字符串长度了}}
-\DoxyCodeLine{137         \textcolor{keywordflow}{else}    convert(s + loc,len -\/ loc);}
-\DoxyCodeLine{138     \}}
-\DoxyCodeLine{145     \mbox{\hyperlink{class_biginteger_a9df141c0f08c604235dca2ad403e1b99}{Biginteger}}(\textcolor{keywordtype}{string} str) \{}
-\DoxyCodeLine{146         \textcolor{keywordtype}{char} *S = \textcolor{keyword}{new} \textcolor{keywordtype}{char}[str.length() + 1];}
-\DoxyCodeLine{147         strcpy(S,str.c\_str());}
-\DoxyCodeLine{148         \textcolor{keyword}{new}(\textcolor{keyword}{this}) \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(S);}
-\DoxyCodeLine{149         \textcolor{keywordflow}{if}(S != NULL)      \textcolor{keyword}{delete} S;}
-\DoxyCodeLine{150     \}}
-\DoxyCodeLine{154       \textcolor{comment}{//拷贝构造函数}}
-\DoxyCodeLine{155     \mbox{\hyperlink{class_biginteger_a4058518547ee370dcc58d8223a3a23f7}{Biginteger}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&another) \{}
-\DoxyCodeLine{156         eff\_len = another.eff\_len;}
-\DoxyCodeLine{157         sign = another.sign;}
-\DoxyCodeLine{158         data = \textcolor{keyword}{new} \textcolor{keywordtype}{int}[another.eff\_len]();}
-\DoxyCodeLine{159         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < eff\_len; i++)    data[i] = another.data[i];}
-\DoxyCodeLine{160     \}}
-\DoxyCodeLine{161     \mbox{\hyperlink{class_biginteger}{Biginteger}} \&operator=(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&another) \{}
-\DoxyCodeLine{162         \textcolor{keywordflow}{if} (\textcolor{keyword}{this} != \&another) \{  \textcolor{comment}{//加上判断，防止自己赋给自己}}
-\DoxyCodeLine{163             \textcolor{keywordflow}{if} (data)    \textcolor{keyword}{delete} data;  \textcolor{comment}{//如果原来有数据，则释放数据}}
-\DoxyCodeLine{164             \textcolor{keyword}{new}(\textcolor{keyword}{this}) \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(another);}
-\DoxyCodeLine{165         \}}
-\DoxyCodeLine{166         \textcolor{keywordflow}{return} *\textcolor{keyword}{this};}
-\DoxyCodeLine{167     \}}
-\DoxyCodeLine{168     \textcolor{comment}{/*比较大小。注意从高位向低位比。*/}}
-\DoxyCodeLine{174     \textcolor{keyword}{inline} \textcolor{keywordtype}{int} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{175         \textcolor{keywordflow}{if}(sign == 2||a.sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
-\DoxyCodeLine{176         \textcolor{keywordtype}{int} alen = a.eff\_len;}
-\DoxyCodeLine{177         \textcolor{comment}{//一个为负，一个不为负}}
-\DoxyCodeLine{178         \textcolor{keywordflow}{if}(sign == -\/1\&\&a.sign != -\/1)    \textcolor{keywordflow}{return} -\/1;}
-\DoxyCodeLine{179         \textcolor{keywordflow}{if}(sign == 1\&\&a.sign != 1)      \textcolor{keywordflow}{return} 1;}
-\DoxyCodeLine{180         \textcolor{keywordflow}{if}(sign == 0\&\&a.sign != 0)      \textcolor{keywordflow}{return} -\/a.sign;}
-\DoxyCodeLine{181         \textcolor{keywordtype}{int} ret = 0;}
-\DoxyCodeLine{182         \textcolor{keywordflow}{if}(eff\_len > a.eff\_len)         ret = 1;}
-\DoxyCodeLine{183         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(eff\_len < a.eff\_len)    ret = -\/1;}
-\DoxyCodeLine{184         \textcolor{comment}{//进入此分支，说明符号相同且位数相同}}
-\DoxyCodeLine{185         \textcolor{keywordflow}{else} \{}
-\DoxyCodeLine{186             \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = alen-\/1; i >= 0; i-\/-\/) \{}
-\DoxyCodeLine{187                 \textcolor{keywordflow}{if}(data[i] > a.data[i]) \{}
-\DoxyCodeLine{188                     ret = 1;}
-\DoxyCodeLine{189                     \textcolor{keywordflow}{break};}
-\DoxyCodeLine{190                 \}}
-\DoxyCodeLine{191                 \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(data[i] < a.data[i]) \{}
-\DoxyCodeLine{192                     ret = -\/1;}
-\DoxyCodeLine{193                     \textcolor{keywordflow}{break};}
-\DoxyCodeLine{194                 \}}
-\DoxyCodeLine{195             \}}
-\DoxyCodeLine{196         \}}
-\DoxyCodeLine{197         \textcolor{keywordflow}{if}(sign == -\/1)    ret = -\/ret;}
-\DoxyCodeLine{198         \textcolor{keywordflow}{return} ret;}
-\DoxyCodeLine{199     \}}
-\DoxyCodeLine{200     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator< (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const  }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) == -\/1;\}}
-\DoxyCodeLine{201     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator> (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const  }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) == 1;\}}
-\DoxyCodeLine{202     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator>= (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) >= 0;\}}
-\DoxyCodeLine{203     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator<= (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) <= 0;\}}
-\DoxyCodeLine{204     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator== (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) == 0;\}}
-\DoxyCodeLine{205     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator!= (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) != 0;\}}
-\DoxyCodeLine{206     \textcolor{comment}{/*求长度*/}}
-\DoxyCodeLine{207     \textcolor{keyword}{inline} \textcolor{keywordtype}{int} getLength()\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{208         \textcolor{keywordtype}{int} highest = data[eff\_len -\/ 1];}
-\DoxyCodeLine{209         \textcolor{keywordflow}{if}(eff\_len == 1\&\&highest == 0)    \textcolor{keywordflow}{return} 1;}
-\DoxyCodeLine{210         \textcolor{keywordtype}{int} lg = 0;}
-\DoxyCodeLine{211         \textcolor{keywordflow}{while} (highest > 0) \{}
-\DoxyCodeLine{212             highest /= 10;}
-\DoxyCodeLine{213             lg++;}
-\DoxyCodeLine{214         \}}
-\DoxyCodeLine{215         \textcolor{keywordflow}{return} (eff\_len -\/ 1) * NUM\_GROUP\_SIZE + lg;}
-\DoxyCodeLine{216     \}}
-\DoxyCodeLine{221     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a547544536451a2baa0c795e4465fa77f}{Negate}}()\textcolor{keyword}{ const}\{}
-\DoxyCodeLine{222         \textcolor{keywordflow}{if}(sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
-\DoxyCodeLine{223         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret = *\textcolor{keyword}{this};}
-\DoxyCodeLine{224         ret.sign = -\/ret.sign;}
-\DoxyCodeLine{225         \textcolor{keywordflow}{return} ret;}
-\DoxyCodeLine{226     \}}
-\DoxyCodeLine{230      \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a6934b903acb5f1dcd9fa46c93bbd2fdf}{absolute}}()\textcolor{keyword}{ const}\{}
-\DoxyCodeLine{231         \textcolor{keywordflow}{if}(sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
-\DoxyCodeLine{232         \textcolor{keywordflow}{if}(sign != -\/1)   \textcolor{keywordflow}{return} *\textcolor{keyword}{this};}
-\DoxyCodeLine{233         \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a547544536451a2baa0c795e4465fa77f}{Negate}}();}
-\DoxyCodeLine{234      \}}
-\DoxyCodeLine{241     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{242         \textcolor{keywordflow}{if}(sign == 2||a.sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
-\DoxyCodeLine{243         \textcolor{comment}{//(1,-\/1)}}
-\DoxyCodeLine{244         \textcolor{keywordflow}{if}(sign == 1\&\&a.sign == -\/1) \{}
-\DoxyCodeLine{245             \mbox{\hyperlink{class_biginteger}{Biginteger}} add2 = a;}
-\DoxyCodeLine{246             add2.sign = 1;}
-\DoxyCodeLine{247             \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}}(add2);}
-\DoxyCodeLine{248         \}}
-\DoxyCodeLine{249         \textcolor{comment}{//(-\/1,1)}}
-\DoxyCodeLine{250         \textcolor{keywordflow}{if}(sign == -\/1\&\&a.sign == 1) \{}
-\DoxyCodeLine{251             \mbox{\hyperlink{class_biginteger}{Biginteger}} add1 = *\textcolor{keyword}{this},add2 = a;}
-\DoxyCodeLine{252             add1.sign = 1;}
-\DoxyCodeLine{253             \textcolor{keywordflow}{return} add2.Subt(add1);}
-\DoxyCodeLine{254         \}}
-\DoxyCodeLine{255         \textcolor{keywordtype}{int} minlen = std::min(eff\_len,a.eff\_len);}
-\DoxyCodeLine{256         \textcolor{keywordtype}{bool} carry = 0;  \textcolor{comment}{//进位标记}}
-\DoxyCodeLine{257         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(std::max(eff\_len,a.eff\_len) + 1);  \textcolor{comment}{//待返回结果}}
-\DoxyCodeLine{258         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < minlen; i++) \{}
-\DoxyCodeLine{259             \textcolor{keywordtype}{int} now = data[i] + a.data[i] + carry;}
-\DoxyCodeLine{260             ret.data[ret.eff\_len++] = now \% MOD\_BASE;}
-\DoxyCodeLine{261             carry = (bool)(now / MOD\_BASE);}
-\DoxyCodeLine{262         \}}
-\DoxyCodeLine{263         \textcolor{keywordflow}{if}(minlen == eff\_len)    addLefts(a,ret,carry,minlen);}
-\DoxyCodeLine{264         \textcolor{keywordflow}{else}    addLefts(*\textcolor{keyword}{this},ret,carry,minlen);}
-\DoxyCodeLine{265         \textcolor{comment}{//处理多余进位}}
-\DoxyCodeLine{266         \textcolor{keywordflow}{if}(carry != 0)   ret.data[ret.eff\_len++] = 1;}
-\DoxyCodeLine{267         \textcolor{comment}{//(0,0)}}
-\DoxyCodeLine{268         \textcolor{keywordflow}{if}(sign == 0\&\&a.sign == 0)    ret.sign = 0;}
-\DoxyCodeLine{269         \textcolor{comment}{//(1,0),(1,1),(0,1)}}
-\DoxyCodeLine{270         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(sign == 1||a.sign == 1)     ret.sign = 1;}
-\DoxyCodeLine{271         \textcolor{comment}{//(-\/1,0),(-\/1,-\/1),(0,-\/1)}}
-\DoxyCodeLine{272         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(sign == -\/1||a.sign == -\/1)   ret.sign = -\/1;}
-\DoxyCodeLine{273         \textcolor{keywordflow}{return} ret;}
-\DoxyCodeLine{274     \}}
-\DoxyCodeLine{275     \mbox{\hyperlink{class_biginteger}{Biginteger}} operator+ (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(a);\}}
-\DoxyCodeLine{282     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{283         \textcolor{keywordflow}{if}(sign == 2||a.sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
-\DoxyCodeLine{284         \mbox{\hyperlink{class_biginteger}{Biginteger}} suber = *\textcolor{keyword}{this},subee = a;}
-\DoxyCodeLine{285         \textcolor{comment}{//(1,0),(-\/1,0),(0,0)}}
-\DoxyCodeLine{286         \textcolor{keywordflow}{if}(subee.sign == 0)        \textcolor{keywordflow}{return} suber;}
-\DoxyCodeLine{287         \textcolor{comment}{//(0,1),(0,-\/1)}}
-\DoxyCodeLine{288         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(suber.sign == 0)   \textcolor{keywordflow}{return} subee.\mbox{\hyperlink{class_biginteger_a547544536451a2baa0c795e4465fa77f}{Negate}}();}
-\DoxyCodeLine{289         \textcolor{comment}{//(1,-\/1)}}
-\DoxyCodeLine{290         \textcolor{keywordflow}{if}(suber.sign == 1\&\&subee.sign == -\/1) \{}
-\DoxyCodeLine{291             subee.sign = 1;}
-\DoxyCodeLine{292             \textcolor{keywordflow}{return} suber.\mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(subee);}
-\DoxyCodeLine{293         \}}
-\DoxyCodeLine{294         \textcolor{comment}{//(-\/1,1)}}
-\DoxyCodeLine{295         \textcolor{keywordflow}{if}(suber.sign == -\/1\&\&subee.sign == 1) \{}
-\DoxyCodeLine{296             suber.sign = 1;}
-\DoxyCodeLine{297             \textcolor{keywordflow}{return} suber.\mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(subee).\mbox{\hyperlink{class_biginteger_a547544536451a2baa0c795e4465fa77f}{Negate}}();}
-\DoxyCodeLine{298         \}}
-\DoxyCodeLine{299         \textcolor{comment}{//(-\/1,-\/1)}}
-\DoxyCodeLine{300         \textcolor{keywordflow}{if}(subee.sign == -\/1\&\&suber.sign == -\/1) \{}
-\DoxyCodeLine{301             suber.sign = subee.sign = 1;}
-\DoxyCodeLine{302             std::swap(suber,subee);}
-\DoxyCodeLine{303         \}}
-\DoxyCodeLine{304         \textcolor{keywordtype}{int} tmp = suber.\mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(subee);}
-\DoxyCodeLine{305         \textcolor{keywordflow}{if}(tmp == -\/1) \{}
-\DoxyCodeLine{306             std::swap(suber,subee);}
-\DoxyCodeLine{307         \}}
-\DoxyCodeLine{308         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(general\_subt(suber,subee));}
-\DoxyCodeLine{309         ret.sign = tmp;}
-\DoxyCodeLine{310         \textcolor{keywordflow}{return} ret;}
-\DoxyCodeLine{311     \}}
-\DoxyCodeLine{312     \mbox{\hyperlink{class_biginteger}{Biginteger}} operator-\/ (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}}(a);\}}
-\DoxyCodeLine{319     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{320         \textcolor{keywordflow}{if}(sign == 2||a.sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
-\DoxyCodeLine{321         \textcolor{keywordflow}{if}(sign == 0||a.sign == 0)    \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(\textcolor{stringliteral}{"{}0"{}});}
-\DoxyCodeLine{322         \textcolor{keywordtype}{int} aLen = a.eff\_len;}
-\DoxyCodeLine{323         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(eff\_len + a.eff\_len);  \textcolor{comment}{//存放结果}}
-\DoxyCodeLine{324         }
-\DoxyCodeLine{325         ret.eff\_len = eff\_len + aLen -\/ 1;}
-\DoxyCodeLine{326         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < eff\_len; i++) \{  \textcolor{comment}{//本数}}
-\DoxyCodeLine{327             \textcolor{keywordtype}{int} carry = 0;}
-\DoxyCodeLine{328             \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} j = 0; j < aLen; j++) \{  \textcolor{comment}{//a}}
-\DoxyCodeLine{329                 \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} now = (\textcolor{keywordtype}{long} long)data[i] * a.data[j] + carry + ret.data[i + j];}
-\DoxyCodeLine{330                 carry = now / MOD\_BASE;}
-\DoxyCodeLine{331                 ret.data[i + j]=now \% MOD\_BASE;}
-\DoxyCodeLine{332             \}}
-\DoxyCodeLine{333             \textcolor{keywordflow}{if}(carry != 0)    ret.data[i + aLen] = carry;}
-\DoxyCodeLine{334         \}}
-\DoxyCodeLine{335         \textcolor{keywordflow}{if}(ret.data[eff\_len + aLen] != 0)}
-\DoxyCodeLine{336             ret.eff\_len++;}
-\DoxyCodeLine{337         ret.sign = (sign == a.sign) ? 1 : -\/1;}
-\DoxyCodeLine{338         removeZero(ret);}
-\DoxyCodeLine{339         \textcolor{keywordflow}{return} ret;}
-\DoxyCodeLine{340     \}}
-\DoxyCodeLine{341     \mbox{\hyperlink{class_biginteger}{Biginteger}} operator* (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(a);\}}
-\DoxyCodeLine{349     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a96b56cdc7869f883f3f106999b16fbc8}{Divide}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{350         \textcolor{keywordflow}{if}(sign == 2||a.sign == 2)     \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
-\DoxyCodeLine{351         \textcolor{comment}{//除数为0}}
-\DoxyCodeLine{352         \textcolor{keywordflow}{if}(a.sign == 0)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_div_by_zero_exception}{DivByZeroException}}();}
-\DoxyCodeLine{353         \textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} ONE(\textcolor{stringliteral}{"{}1"{}}),Divided(\mbox{\hyperlink{class_biginteger_a6934b903acb5f1dcd9fa46c93bbd2fdf}{absolute}}()),Divisor(a.\mbox{\hyperlink{class_biginteger_a6934b903acb5f1dcd9fa46c93bbd2fdf}{absolute}}());}
-\DoxyCodeLine{354         \mbox{\hyperlink{class_biginteger}{Biginteger}} l(ONE),r(Divided.divByTwo()),mid;}
-\DoxyCodeLine{355         \textcolor{comment}{//被除数更小}}
-\DoxyCodeLine{356         \textcolor{keywordflow}{if}(Divisor > Divided)      \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(\textcolor{stringliteral}{"{}0"{}});}
-\DoxyCodeLine{357         \textcolor{keywordflow}{if}(Divisor == ONE)    l = Divided;}
-\DoxyCodeLine{358         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(Divisor == ONE.\mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(ONE))    l = r;}
-\DoxyCodeLine{359         \textcolor{keywordflow}{else} \{}
-\DoxyCodeLine{360             \textcolor{keywordflow}{while} (l < r) \{}
-\DoxyCodeLine{361                 mid = (l.Add(r)).divByTwo();}
-\DoxyCodeLine{362                 \textcolor{keywordflow}{if}(mid.\mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(Divisor) > Divided)    r = mid;}
-\DoxyCodeLine{363                 \textcolor{keywordflow}{else}    l = mid.\mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(ONE);}
-\DoxyCodeLine{364             \}}
-\DoxyCodeLine{365             l = l.\mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}}(ONE);}
-\DoxyCodeLine{366         \}}
-\DoxyCodeLine{367         l.sign = (sign == a.sign) ? 1 : -\/1;}
-\DoxyCodeLine{368 \textcolor{comment}{//        removeZero(l);}}
-\DoxyCodeLine{369         \textcolor{keywordflow}{return} l;}
-\DoxyCodeLine{370     \}}
-\DoxyCodeLine{371     \mbox{\hyperlink{class_biginteger}{Biginteger}} operator/ (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a96b56cdc7869f883f3f106999b16fbc8}{Divide}}(a);\}}
-\DoxyCodeLine{381     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a70a556b9abf76ab8590a06537742646c}{Mod}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{382         \mbox{\hyperlink{class_biginteger}{Biginteger}} quot = \mbox{\hyperlink{class_biginteger_a96b56cdc7869f883f3f106999b16fbc8}{Divide}}(a);}
-\DoxyCodeLine{383         \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}}(quot.\mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(a));}
-\DoxyCodeLine{384     \}}
-\DoxyCodeLine{385     \mbox{\hyperlink{class_biginteger}{Biginteger}} operator\% (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a70a556b9abf76ab8590a06537742646c}{Mod}}(a);\}}
-\DoxyCodeLine{390     \textcolor{keywordtype}{string} \mbox{\hyperlink{class_biginteger_abb6179b40128fd3531dda1a50d0479fb}{toString}}()\textcolor{keyword}{ const }\{}
-\DoxyCodeLine{391         \textcolor{keywordflow}{if}(sign == 2)   \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
-\DoxyCodeLine{392         \textcolor{keywordflow}{if}(sign == 0)   \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}0"{}};}
-\DoxyCodeLine{393         \textcolor{keywordtype}{string} ret = \textcolor{stringliteral}{"{}"{}};}
-\DoxyCodeLine{394         \textcolor{keywordtype}{int} now = 0;}
-\DoxyCodeLine{395 }
-\DoxyCodeLine{396         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < eff\_len -\/ 1; i++) \{}
-\DoxyCodeLine{397             \textcolor{keywordtype}{int} now = data[i];}
-\DoxyCodeLine{398             \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} j = 0; j < NUM\_GROUP\_SIZE; j++) \{}
-\DoxyCodeLine{399                 ret.append(1,(now \% 10) + \textcolor{charliteral}{'0'});}
-\DoxyCodeLine{400                 now /= 10;}
-\DoxyCodeLine{401             \}}
-\DoxyCodeLine{402         \}}
-\DoxyCodeLine{403         now = data[eff\_len -\/ 1];}
-\DoxyCodeLine{404         \textcolor{comment}{//处理最高位}}
-\DoxyCodeLine{405         \textcolor{keywordflow}{do} \{}
-\DoxyCodeLine{406             ret.append(1,(now \% 10)+\textcolor{charliteral}{'0'});}
-\DoxyCodeLine{407             now /= 10;}
-\DoxyCodeLine{408         \} \textcolor{keywordflow}{while}(now > 0);}
-\DoxyCodeLine{409         \textcolor{keywordflow}{if}(sign == -\/1)    ret += \textcolor{stringliteral}{"{}-\/"{}};}
-\DoxyCodeLine{410         std::reverse(ret.begin(),ret.end());}
-\DoxyCodeLine{411         \textcolor{keywordflow}{return} ret;}
-\DoxyCodeLine{412     \}}
-\DoxyCodeLine{413     \mbox{\hyperlink{class_biginteger}{\string~Biginteger}}() \{}
-\DoxyCodeLine{414         \textcolor{keywordflow}{if}(data != NULL) \{}
-\DoxyCodeLine{415             \textcolor{keyword}{delete} []data;}
-\DoxyCodeLine{416             data = NULL;}
-\DoxyCodeLine{417         \}}
-\DoxyCodeLine{418     \}}
-\DoxyCodeLine{419 \};}
-\DoxyCodeLine{420 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// BIGINT\_H}}
+\DoxyCodeLine{32     \textcolor{keyword}{inline} \textcolor{keywordtype}{int} check(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s,\textcolor{keywordtype}{int} len) \{}
+\DoxyCodeLine{33         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 1; i < len; i++) \{}
+\DoxyCodeLine{34             \textcolor{keywordflow}{if}(!(s[i] >= \textcolor{charliteral}{'0'}\&\&s[i] <= \textcolor{charliteral}{'9'}))    \textcolor{keywordflow}{return} i;}
+\DoxyCodeLine{35         \}}
+\DoxyCodeLine{36         \textcolor{comment}{//第一个是负号或数字，如果是负号，则长度必须大于一。后面的必须全部是数字。}}
+\DoxyCodeLine{37         \textcolor{keywordflow}{if}(s[0] == \textcolor{charliteral}{'-\/'})    \textcolor{keywordflow}{return} (len != 1) ? -\/1 : 0;}
+\DoxyCodeLine{38         \textcolor{keywordflow}{else}    \textcolor{keywordflow}{return} (s[0] >= \textcolor{charliteral}{'0'}\&\&s[0] <= \textcolor{charliteral}{'9'}) ? -\/1 : 0;}
+\DoxyCodeLine{39     \}}
+\DoxyCodeLine{40     \textcolor{comment}{/*删除前导0*/}}
+\DoxyCodeLine{41     \textcolor{keyword}{inline} \textcolor{keywordtype}{int} firNoneZero(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s,\textcolor{keywordtype}{int} len) \{}
+\DoxyCodeLine{42         \textcolor{keywordtype}{int} i;}
+\DoxyCodeLine{43         \textcolor{keywordflow}{for}(i = (s[0] == \textcolor{charliteral}{'-\/'}) ? 1 : 0; i < len -\/ 1\&\&s[i] == \textcolor{charliteral}{'0'}; i++);}
+\DoxyCodeLine{44         \textcolor{keywordflow}{return} i;}
+\DoxyCodeLine{45     \}}
+\DoxyCodeLine{46     \textcolor{comment}{/*转换为int数组，方便乘法与加法运算*/}}
+\DoxyCodeLine{47     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} convert(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s,\textcolor{keywordtype}{int} len) \{}
+\DoxyCodeLine{48         \textcolor{keywordtype}{int} k = 0,mini = (s[0] == \textcolor{charliteral}{'-\/'}) ? 1 : 0;}
+\DoxyCodeLine{49         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = len-\/1; i >= mini; i -\/= NUM\_GROUP\_SIZE) \{}
+\DoxyCodeLine{50             \textcolor{keywordtype}{int} now = 0;}
+\DoxyCodeLine{51             \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} j = i -\/ (NUM\_GROUP\_SIZE -\/ 1); j <= i; j++) \{}
+\DoxyCodeLine{52                 \textcolor{keywordflow}{if}(j < mini)    \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{53                 now = now * 10 + (s[j] -\/ \textcolor{charliteral}{'0'});}
+\DoxyCodeLine{54             \}}
+\DoxyCodeLine{55             data[k++] = now;}
+\DoxyCodeLine{56         \}}
+\DoxyCodeLine{57     \}}
+\DoxyCodeLine{58     \textcolor{comment}{/*处理加法剩下的位数。a为位数较多的数*/}}
+\DoxyCodeLine{59     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} addLefts(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a,\mbox{\hyperlink{class_biginteger}{Biginteger}} \&res,\textcolor{keywordtype}{bool} \&carry,\textcolor{keywordtype}{int} minlen)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{60         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = minlen; i < a.eff\_len; i++) \{}
+\DoxyCodeLine{61             \textcolor{keywordtype}{int} now = a.data[i] + carry;}
+\DoxyCodeLine{62             res.data[res.eff\_len++] = now \% MOD\_BASE;}
+\DoxyCodeLine{63             carry = (bool)(now / MOD\_BASE);}
+\DoxyCodeLine{64         \}}
+\DoxyCodeLine{65     \}}
+\DoxyCodeLine{66     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} removeZero() \{}
+\DoxyCodeLine{67         \textcolor{keywordflow}{while}(data[eff\_len -\/ 1] == 0\&\&eff\_len > 1)}
+\DoxyCodeLine{68             eff\_len-\/-\/;}
+\DoxyCodeLine{69     \}}
+\DoxyCodeLine{70     \textcolor{comment}{/*处理减法。在此处提供统一接口是因为结果可正可负*/}}
+\DoxyCodeLine{71     \mbox{\hyperlink{class_biginteger}{Biginteger}} general\_subt(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&large,\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&small)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{72         \textcolor{keywordtype}{bool} carry = 0;  \textcolor{comment}{//退位}}
+\DoxyCodeLine{73         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(large.eff\_len);}
+\DoxyCodeLine{74         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < small.eff\_len; i++) \{}
+\DoxyCodeLine{75             \textcolor{keywordtype}{int} now = large.data[i] -\/ small.data[i] -\/ carry;}
+\DoxyCodeLine{76             \textcolor{keywordflow}{if}(now < 0) \{}
+\DoxyCodeLine{77                 carry = 1;}
+\DoxyCodeLine{78                 now = MOD\_BASE + now;}
+\DoxyCodeLine{79             \}}
+\DoxyCodeLine{80             \textcolor{keywordflow}{else}    carry = 0;}
+\DoxyCodeLine{81             ret.data[ret.eff\_len++] = now;}
+\DoxyCodeLine{82         \}\textcolor{comment}{//处理后面几位}}
+\DoxyCodeLine{83         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = small.eff\_len; i < large.eff\_len; i++) \{}
+\DoxyCodeLine{84             \textcolor{keywordtype}{int} now = large.data[i] -\/ carry;}
+\DoxyCodeLine{85             \textcolor{keywordflow}{if}(now < 0) \{}
+\DoxyCodeLine{86                 carry = 1;}
+\DoxyCodeLine{87                 now = MOD\_BASE + now;}
+\DoxyCodeLine{88             \}}
+\DoxyCodeLine{89             \textcolor{keywordflow}{else}    carry = 0;}
+\DoxyCodeLine{90             ret.data[ret.eff\_len++] = now;}
+\DoxyCodeLine{91         \}}
+\DoxyCodeLine{92         \textcolor{comment}{//前导零的特殊处理。注意a==b的特殊情况}}
+\DoxyCodeLine{93         \textcolor{comment}{//注意：由于上面统一用位数较多数的位数初始化，所以此处可能不知要删1个}}
+\DoxyCodeLine{94         ret.removeZero();      }
+\DoxyCodeLine{95         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{96     \}}
+\DoxyCodeLine{97     \textcolor{comment}{//除以2，方便除法时使用二分。}}
+\DoxyCodeLine{98     \mbox{\hyperlink{class_biginteger}{Biginteger}} divByTwo()\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{99         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(*\textcolor{keyword}{this});}
+\DoxyCodeLine{100         \textcolor{keywordtype}{bool} carry = 0; \textcolor{comment}{//进位指示器}}
+\DoxyCodeLine{101         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = eff\_len -\/ 1; i >= 0; i-\/-\/) \{}
+\DoxyCodeLine{102             \textcolor{keywordtype}{int} now = data[i] >> 1;}
+\DoxyCodeLine{103             \textcolor{keywordflow}{if}(carry) \{}
+\DoxyCodeLine{104                 now = (now + (MOD\_BASE >> 1)) \% MOD\_BASE;}
+\DoxyCodeLine{105             \}}
+\DoxyCodeLine{106             ret.data[i] = now;}
+\DoxyCodeLine{107             carry = data[i] \& 1;}
+\DoxyCodeLine{108         \}}
+\DoxyCodeLine{109         ret.removeZero();}
+\DoxyCodeLine{110         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{111     \}}
+\DoxyCodeLine{112       \textcolor{comment}{//取得低位 }}
+\DoxyCodeLine{113     \mbox{\hyperlink{class_biginteger}{Biginteger}} getLower(\textcolor{keywordtype}{int} len)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{114         \textcolor{keywordflow}{if}(len <= 0)    \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(\textcolor{stringliteral}{"{}0"{}});}
+\DoxyCodeLine{115         \textcolor{keywordflow}{if}(len >= eff\_len)    \textcolor{keywordflow}{return} *\textcolor{keyword}{this};}
+\DoxyCodeLine{116         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(len);}
+\DoxyCodeLine{117         ret.eff\_len = len;}
+\DoxyCodeLine{118         ret.sign = 1;}
+\DoxyCodeLine{119         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < len; i++) \{}
+\DoxyCodeLine{120             ret.data[i] = data[i];}
+\DoxyCodeLine{121         \}}
+\DoxyCodeLine{122         \textcolor{keywordflow}{return} ret; }
+\DoxyCodeLine{123     \}}
+\DoxyCodeLine{124     \textcolor{comment}{//取得高位，自动补0}}
+\DoxyCodeLine{125     \mbox{\hyperlink{class_biginteger}{Biginteger}} getUpper(\textcolor{keywordtype}{int} len)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{126         \textcolor{keywordflow}{if}(len <= 0)    \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(\textcolor{stringliteral}{"{}0"{}});}
+\DoxyCodeLine{127         \textcolor{keywordflow}{if}(len >= eff\_len)    \textcolor{keywordflow}{return} *\textcolor{keyword}{this};}
+\DoxyCodeLine{128         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(len);}
+\DoxyCodeLine{129         ret.eff\_len = len;}
+\DoxyCodeLine{130         ret.sign = 1;}
+\DoxyCodeLine{131         \textcolor{keywordtype}{int} dif = eff\_len -\/ len;}
+\DoxyCodeLine{132         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < len; i++) \{}
+\DoxyCodeLine{133             ret.data[i] = data[i + dif];}
+\DoxyCodeLine{134         \}}
+\DoxyCodeLine{135         ret.removeZero();}
+\DoxyCodeLine{136         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{137     \}}
+\DoxyCodeLine{138     \mbox{\hyperlink{class_biginteger}{Biginteger}} addZero(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} n)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{139         \textcolor{keywordtype}{int} len = eff\_len + n;}
+\DoxyCodeLine{140         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(len);}
+\DoxyCodeLine{141         ret.eff\_len = len;}
+\DoxyCodeLine{142         ret.sign = sign;}
+\DoxyCodeLine{143         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = eff\_len -\/ 1; i >= 0; i-\/-\/) \{}
+\DoxyCodeLine{144             ret.data[i + n] = data[i];}
+\DoxyCodeLine{145         \}}
+\DoxyCodeLine{146         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{147     \}}
+\DoxyCodeLine{148     \mbox{\hyperlink{class_biginteger}{Biginteger}} classicMul(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{149         \textcolor{keywordtype}{int} aLen = a.eff\_len;}
+\DoxyCodeLine{150         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(eff\_len + aLen);  \textcolor{comment}{//存放结果}}
+\DoxyCodeLine{151         }
+\DoxyCodeLine{152         ret.eff\_len = eff\_len + aLen -\/ 1;}
+\DoxyCodeLine{153         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < eff\_len; i++) \{  \textcolor{comment}{//this}}
+\DoxyCodeLine{154             \textcolor{keywordtype}{int} carry = 0;}
+\DoxyCodeLine{155             \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} j = 0; j < aLen; j++) \{  \textcolor{comment}{//a}}
+\DoxyCodeLine{156                 \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} now = (\textcolor{keywordtype}{long} long)data[i] * a.data[j] + carry + ret.data[i + j];}
+\DoxyCodeLine{157                 carry = now / MOD\_BASE;}
+\DoxyCodeLine{158                 ret.data[i + j]=now \% MOD\_BASE;}
+\DoxyCodeLine{159             \}}
+\DoxyCodeLine{160             \textcolor{keywordflow}{if}(carry != 0)    ret.data[i + aLen] = carry;}
+\DoxyCodeLine{161         \}}
+\DoxyCodeLine{162         \textcolor{keywordflow}{if}(ret.data[eff\_len + aLen -\/ 1] != 0)}
+\DoxyCodeLine{163             ret.eff\_len++;}
+\DoxyCodeLine{164         ret.removeZero();}
+\DoxyCodeLine{165         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{166     \}}
+\DoxyCodeLine{167     \textcolor{comment}{//Karatsuba乘法}}
+\DoxyCodeLine{168     \mbox{\hyperlink{class_biginteger}{Biginteger}} Karatsuba(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{169         \textcolor{keywordtype}{int} half = (std::max(eff\_len,a.eff\_len) + 1) / 2;}
+\DoxyCodeLine{170         \mbox{\hyperlink{class_biginteger}{Biginteger}} xh = getUpper(eff\_len -\/ half),xl = getLower(half);  \textcolor{comment}{//第一个因数 }}
+\DoxyCodeLine{171         \mbox{\hyperlink{class_biginteger}{Biginteger}} yh = a.getUpper(a.eff\_len -\/ half),yl = a.getLower(half); \textcolor{comment}{//第二个因数}}
+\DoxyCodeLine{172         \textcolor{comment}{//pl=xl * yl  ph=xh * yh}}
+\DoxyCodeLine{173         \mbox{\hyperlink{class_biginteger}{Biginteger}} pl = xl.\mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(yl);}
+\DoxyCodeLine{174         \mbox{\hyperlink{class_biginteger}{Biginteger}} ph = xh.\mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(yh);}
+\DoxyCodeLine{175         \textcolor{comment}{//res= pl + ph * MODE\_BASE\string^(half * 2) + ((xl + xh)(yl + yh) -\/ pl -\/ ph) * MODE\_BASE(half)}}
+\DoxyCodeLine{176         \textcolor{keywordflow}{return} pl + ph.addZero(half * 2) + ((xl.Add(xh)).\mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(yl.Add(yh)) -\/ pl -\/ ph).addZero(half);}
+\DoxyCodeLine{177     \}}
+\DoxyCodeLine{178   \textcolor{keyword}{public}:}
+\DoxyCodeLine{182     \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}():data(NULL),eff\_len(0),sign(2) \{\}}
+\DoxyCodeLine{188     \mbox{\hyperlink{class_biginteger_ae4615925f117a9633f8fc9f42ee8d318}{Biginteger}}(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *s) \{}
+\DoxyCodeLine{189         \textcolor{keywordflow}{if}(s == NULL)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
+\DoxyCodeLine{190         \textcolor{keywordtype}{int} len = strlen(s),chkres=check(s,len);}
+\DoxyCodeLine{191         \textcolor{keywordflow}{if}(chkres != -\/1)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_number_format_exception}{NumberFormatException}}(s[chkres]);}
+\DoxyCodeLine{192         \textcolor{keywordtype}{int} loc = firNoneZero(s,len);}
+\DoxyCodeLine{193         eff\_len = (len -\/ loc + NUM\_GROUP\_SIZE -\/1) / NUM\_GROUP\_SIZE;}
+\DoxyCodeLine{194         data = \textcolor{keyword}{new} \textcolor{keywordtype}{int}[eff\_len]();}
+\DoxyCodeLine{195         sign = (s[0] == \textcolor{charliteral}{'-\/'}) ? -\/1 : 1;}
+\DoxyCodeLine{196         \textcolor{comment}{//0的特殊处理}}
+\DoxyCodeLine{197         \textcolor{keywordflow}{if}(strcmp(s + loc,\textcolor{stringliteral}{"{}0"{}}) == 0||strcmp(s + loc,\textcolor{stringliteral}{"{}-\/0"{}}) == 0) \{}
+\DoxyCodeLine{198             data[0] = 0;}
+\DoxyCodeLine{199             sign = 0;}
+\DoxyCodeLine{200         \}}
+\DoxyCodeLine{201         \textcolor{comment}{//注 长度不是原来的字符串长度了}}
+\DoxyCodeLine{202         \textcolor{keywordflow}{else}    convert(s + loc,len -\/ loc);}
+\DoxyCodeLine{203     \}}
+\DoxyCodeLine{210     \mbox{\hyperlink{class_biginteger_a9df141c0f08c604235dca2ad403e1b99}{Biginteger}}(\textcolor{keywordtype}{string} str) \{}
+\DoxyCodeLine{211         \textcolor{keywordtype}{char} *S = \textcolor{keyword}{new} \textcolor{keywordtype}{char}[str.length() + 1];}
+\DoxyCodeLine{212         strcpy(S,str.c\_str());}
+\DoxyCodeLine{213         \textcolor{keyword}{new}(\textcolor{keyword}{this}) \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(S);}
+\DoxyCodeLine{214         \textcolor{keywordflow}{if}(S != NULL)      \textcolor{keyword}{delete} S;}
+\DoxyCodeLine{215     \}}
+\DoxyCodeLine{219       \textcolor{comment}{//拷贝构造函数}}
+\DoxyCodeLine{220     \mbox{\hyperlink{class_biginteger_a4058518547ee370dcc58d8223a3a23f7}{Biginteger}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&another) \{}
+\DoxyCodeLine{221         eff\_len = another.eff\_len;}
+\DoxyCodeLine{222         sign = another.sign;}
+\DoxyCodeLine{223         data = \textcolor{keyword}{new} \textcolor{keywordtype}{int}[another.eff\_len]();}
+\DoxyCodeLine{224         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < eff\_len; i++)    data[i] = another.data[i];}
+\DoxyCodeLine{225     \}}
+\DoxyCodeLine{226     \mbox{\hyperlink{class_biginteger}{Biginteger}} \&operator=(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&another) \{}
+\DoxyCodeLine{227         \textcolor{keywordflow}{if} (\textcolor{keyword}{this} != \&another) \{  \textcolor{comment}{//加上判断，防止自己赋给自己}}
+\DoxyCodeLine{228             \textcolor{keywordflow}{if} (data)    \textcolor{keyword}{delete} data;  \textcolor{comment}{//如果原来有数据，则释放数据}}
+\DoxyCodeLine{229             \textcolor{keyword}{new}(\textcolor{keyword}{this}) \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(another);}
+\DoxyCodeLine{230         \}}
+\DoxyCodeLine{231         \textcolor{keywordflow}{return} *\textcolor{keyword}{this};}
+\DoxyCodeLine{232     \}}
+\DoxyCodeLine{233     \textcolor{comment}{/*比较大小。注意从高位向低位比。*/}}
+\DoxyCodeLine{239     \textcolor{keyword}{inline} \textcolor{keywordtype}{int} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{240         \textcolor{keywordflow}{if}(sign == 2||a.sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
+\DoxyCodeLine{241         \textcolor{keywordtype}{int} alen = a.eff\_len;}
+\DoxyCodeLine{242         \textcolor{comment}{//一个为负，一个不为负}}
+\DoxyCodeLine{243         \textcolor{keywordflow}{if}(sign == -\/1\&\&a.sign != -\/1)    \textcolor{keywordflow}{return} -\/1;}
+\DoxyCodeLine{244         \textcolor{keywordflow}{if}(sign == 1\&\&a.sign != 1)      \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{245         \textcolor{keywordflow}{if}(sign == 0\&\&a.sign != 0)      \textcolor{keywordflow}{return} -\/a.sign;}
+\DoxyCodeLine{246         \textcolor{keywordtype}{int} ret = 0;}
+\DoxyCodeLine{247         \textcolor{keywordflow}{if}(eff\_len > a.eff\_len)         ret = 1;}
+\DoxyCodeLine{248         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(eff\_len < a.eff\_len)    ret = -\/1;}
+\DoxyCodeLine{249         \textcolor{comment}{//进入此分支，说明符号相同且位数相同}}
+\DoxyCodeLine{250         \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{251             \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = alen-\/1; i >= 0; i-\/-\/) \{}
+\DoxyCodeLine{252                 \textcolor{keywordflow}{if}(data[i] > a.data[i]) \{}
+\DoxyCodeLine{253                     ret = 1;}
+\DoxyCodeLine{254                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{255                 \}}
+\DoxyCodeLine{256                 \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(data[i] < a.data[i]) \{}
+\DoxyCodeLine{257                     ret = -\/1;}
+\DoxyCodeLine{258                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{259                 \}}
+\DoxyCodeLine{260             \}}
+\DoxyCodeLine{261         \}}
+\DoxyCodeLine{262         \textcolor{keywordflow}{if}(sign == -\/1)    ret = -\/ret;}
+\DoxyCodeLine{263         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{264     \}}
+\DoxyCodeLine{265     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator< (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const  }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) == -\/1;\}}
+\DoxyCodeLine{266     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator> (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const  }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) == 1;\}}
+\DoxyCodeLine{267     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator>= (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) >= 0;\}}
+\DoxyCodeLine{268     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator<= (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) <= 0;\}}
+\DoxyCodeLine{269     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator== (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) == 0;\}}
+\DoxyCodeLine{270     \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} operator!= (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(a) != 0;\}}
+\DoxyCodeLine{271     \textcolor{comment}{/*求长度*/}}
+\DoxyCodeLine{272     \textcolor{keyword}{inline} \textcolor{keywordtype}{int} getLength()\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{273         \textcolor{keywordtype}{int} highest = data[eff\_len -\/ 1];}
+\DoxyCodeLine{274         \textcolor{keywordflow}{if}(eff\_len == 1\&\&highest == 0)    \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{275         \textcolor{keywordtype}{int} lg = 0;}
+\DoxyCodeLine{276         \textcolor{keywordflow}{while} (highest > 0) \{}
+\DoxyCodeLine{277             highest /= 10;}
+\DoxyCodeLine{278             lg++;}
+\DoxyCodeLine{279         \}}
+\DoxyCodeLine{280         \textcolor{keywordflow}{return} (eff\_len -\/ 1) * NUM\_GROUP\_SIZE + lg;}
+\DoxyCodeLine{281     \}}
+\DoxyCodeLine{286     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a547544536451a2baa0c795e4465fa77f}{Negate}}()\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{287         \textcolor{keywordflow}{if}(sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
+\DoxyCodeLine{288         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret = *\textcolor{keyword}{this};}
+\DoxyCodeLine{289         ret.sign = -\/ret.sign;}
+\DoxyCodeLine{290         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{291     \}}
+\DoxyCodeLine{295      \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a6934b903acb5f1dcd9fa46c93bbd2fdf}{absolute}}()\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{296         \textcolor{keywordflow}{if}(sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
+\DoxyCodeLine{297         \textcolor{keywordflow}{if}(sign != -\/1)   \textcolor{keywordflow}{return} *\textcolor{keyword}{this};}
+\DoxyCodeLine{298         \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a547544536451a2baa0c795e4465fa77f}{Negate}}();}
+\DoxyCodeLine{299      \}}
+\DoxyCodeLine{306     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{307         \textcolor{keywordflow}{if}(sign == 2||a.sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
+\DoxyCodeLine{308         \textcolor{comment}{//(1,-\/1)}}
+\DoxyCodeLine{309         \textcolor{keywordflow}{if}(sign == 1\&\&a.sign == -\/1) \{}
+\DoxyCodeLine{310             \mbox{\hyperlink{class_biginteger}{Biginteger}} add2 = a;}
+\DoxyCodeLine{311             add2.sign = 1;}
+\DoxyCodeLine{312             \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}}(add2);}
+\DoxyCodeLine{313         \}}
+\DoxyCodeLine{314         \textcolor{comment}{//(-\/1,1)}}
+\DoxyCodeLine{315         \textcolor{keywordflow}{if}(sign == -\/1\&\&a.sign == 1) \{}
+\DoxyCodeLine{316             \mbox{\hyperlink{class_biginteger}{Biginteger}} add1 = *\textcolor{keyword}{this},add2 = a;}
+\DoxyCodeLine{317             add1.sign = 1;}
+\DoxyCodeLine{318             \textcolor{keywordflow}{return} add2.Subt(add1);}
+\DoxyCodeLine{319         \}}
+\DoxyCodeLine{320         \textcolor{keywordtype}{int} minlen = std::min(eff\_len,a.eff\_len);}
+\DoxyCodeLine{321         \textcolor{keywordtype}{bool} carry = 0;  \textcolor{comment}{//进位标记}}
+\DoxyCodeLine{322         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(std::max(eff\_len,a.eff\_len) + 1);  \textcolor{comment}{//待返回结果}}
+\DoxyCodeLine{323         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < minlen; i++) \{}
+\DoxyCodeLine{324             \textcolor{keywordtype}{int} now = data[i] + a.data[i] + carry;}
+\DoxyCodeLine{325             ret.data[ret.eff\_len++] = now \% MOD\_BASE;}
+\DoxyCodeLine{326             carry = (bool)(now / MOD\_BASE);}
+\DoxyCodeLine{327         \}}
+\DoxyCodeLine{328         \textcolor{keywordflow}{if}(minlen == eff\_len)    addLefts(a,ret,carry,minlen);}
+\DoxyCodeLine{329         \textcolor{keywordflow}{else}    addLefts(*\textcolor{keyword}{this},ret,carry,minlen);}
+\DoxyCodeLine{330         \textcolor{comment}{//处理多余进位}}
+\DoxyCodeLine{331         \textcolor{keywordflow}{if}(carry != 0)   ret.data[ret.eff\_len++] = 1;}
+\DoxyCodeLine{332         \textcolor{comment}{//(0,0)}}
+\DoxyCodeLine{333         \textcolor{keywordflow}{if}(sign == 0\&\&a.sign == 0)    ret.sign = 0;}
+\DoxyCodeLine{334         \textcolor{comment}{//(1,0),(1,1),(0,1)}}
+\DoxyCodeLine{335         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(sign == 1||a.sign == 1)     ret.sign = 1;}
+\DoxyCodeLine{336         \textcolor{comment}{//(-\/1,0),(-\/1,-\/1),(0,-\/1)}}
+\DoxyCodeLine{337         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(sign == -\/1||a.sign == -\/1)   ret.sign = -\/1;}
+\DoxyCodeLine{338         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{339     \}}
+\DoxyCodeLine{340     \mbox{\hyperlink{class_biginteger}{Biginteger}} operator+ (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(a);\}}
+\DoxyCodeLine{347     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{348         \textcolor{keywordflow}{if}(sign == 2||a.sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
+\DoxyCodeLine{349         \mbox{\hyperlink{class_biginteger}{Biginteger}} suber = *\textcolor{keyword}{this},subee = a;}
+\DoxyCodeLine{350         \textcolor{comment}{//(1,0),(-\/1,0),(0,0)}}
+\DoxyCodeLine{351         \textcolor{keywordflow}{if}(subee.sign == 0)        \textcolor{keywordflow}{return} suber;}
+\DoxyCodeLine{352         \textcolor{comment}{//(0,1),(0,-\/1)}}
+\DoxyCodeLine{353         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(suber.sign == 0)   \textcolor{keywordflow}{return} subee.\mbox{\hyperlink{class_biginteger_a547544536451a2baa0c795e4465fa77f}{Negate}}();}
+\DoxyCodeLine{354         \textcolor{comment}{//(1,-\/1)}}
+\DoxyCodeLine{355         \textcolor{keywordflow}{if}(suber.sign == 1\&\&subee.sign == -\/1) \{}
+\DoxyCodeLine{356             subee.sign = 1;}
+\DoxyCodeLine{357             \textcolor{keywordflow}{return} suber.\mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(subee);}
+\DoxyCodeLine{358         \}}
+\DoxyCodeLine{359         \textcolor{comment}{//(-\/1,1)}}
+\DoxyCodeLine{360         \textcolor{keywordflow}{if}(suber.sign == -\/1\&\&subee.sign == 1) \{}
+\DoxyCodeLine{361             suber.sign = 1;}
+\DoxyCodeLine{362             \textcolor{keywordflow}{return} suber.\mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(subee).\mbox{\hyperlink{class_biginteger_a547544536451a2baa0c795e4465fa77f}{Negate}}();}
+\DoxyCodeLine{363         \}}
+\DoxyCodeLine{364         \textcolor{comment}{//(-\/1,-\/1)}}
+\DoxyCodeLine{365         \textcolor{keywordflow}{if}(subee.sign == -\/1\&\&suber.sign == -\/1) \{}
+\DoxyCodeLine{366             suber.sign = subee.sign = 1;}
+\DoxyCodeLine{367             std::swap(suber,subee);}
+\DoxyCodeLine{368         \}}
+\DoxyCodeLine{369         \textcolor{keywordtype}{int} tmp = suber.\mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}}(subee);}
+\DoxyCodeLine{370         \textcolor{keywordflow}{if}(tmp == -\/1) \{}
+\DoxyCodeLine{371             std::swap(suber,subee);}
+\DoxyCodeLine{372         \}}
+\DoxyCodeLine{373         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret(general\_subt(suber,subee));}
+\DoxyCodeLine{374         ret.sign = tmp;}
+\DoxyCodeLine{375         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{376     \}}
+\DoxyCodeLine{377     \mbox{\hyperlink{class_biginteger}{Biginteger}} operator-\/ (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}}(a);\}}
+\DoxyCodeLine{389     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{390         \textcolor{keywordflow}{if}(sign == 2||a.sign == 2)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
+\DoxyCodeLine{391         \textcolor{keywordflow}{if}(sign == 0||a.sign == 0)    \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(\textcolor{stringliteral}{"{}0"{}});}
+\DoxyCodeLine{392         \mbox{\hyperlink{class_biginteger}{Biginteger}} ret;}
+\DoxyCodeLine{393         \textcolor{keywordflow}{if}(eff\_len > KARA\_THRESHOLD\&\&a.eff\_len > KARA\_THRESHOLD)}
+\DoxyCodeLine{394             ret = Karatsuba(a);}
+\DoxyCodeLine{395         \textcolor{keywordflow}{else}    ret = classicMul(a);}
+\DoxyCodeLine{396         ret.sign = (sign == a.sign) ? 1 : -\/1;}
+\DoxyCodeLine{397         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{398     \}}
+\DoxyCodeLine{399     \mbox{\hyperlink{class_biginteger}{Biginteger}} operator* (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(a);\}}
+\DoxyCodeLine{407     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a96b56cdc7869f883f3f106999b16fbc8}{Divide}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{408         \textcolor{keywordflow}{if}(sign == 2||a.sign == 2)     \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
+\DoxyCodeLine{409         \textcolor{comment}{//除数为0}}
+\DoxyCodeLine{410         \textcolor{keywordflow}{if}(a.sign == 0)    \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_div_by_zero_exception}{DivByZeroException}}();}
+\DoxyCodeLine{411         \textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} ONE(\textcolor{stringliteral}{"{}1"{}}),Divided(\mbox{\hyperlink{class_biginteger_a6934b903acb5f1dcd9fa46c93bbd2fdf}{absolute}}()),Divisor(a.\mbox{\hyperlink{class_biginteger_a6934b903acb5f1dcd9fa46c93bbd2fdf}{absolute}}());}
+\DoxyCodeLine{412         \mbox{\hyperlink{class_biginteger}{Biginteger}} l(ONE),r(Divided.divByTwo()),mid;}
+\DoxyCodeLine{413         \textcolor{comment}{//被除数更小}}
+\DoxyCodeLine{414         \textcolor{keywordflow}{if}(Divisor > Divided)      \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}}(\textcolor{stringliteral}{"{}0"{}});}
+\DoxyCodeLine{415         \textcolor{keywordflow}{if}(Divisor == ONE)    l = Divided;}
+\DoxyCodeLine{416         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(Divisor == ONE.\mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(ONE))    l = r;}
+\DoxyCodeLine{417         \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{418             \textcolor{keywordflow}{while} (l < r) \{}
+\DoxyCodeLine{419                 mid = (l.Add(r)).divByTwo();}
+\DoxyCodeLine{420                 \textcolor{keywordflow}{if}(mid.\mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(Divisor) > Divided)    r = mid;}
+\DoxyCodeLine{421                 \textcolor{keywordflow}{else}    l = mid.\mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}}(ONE);}
+\DoxyCodeLine{422             \}}
+\DoxyCodeLine{423             l = l.\mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}}(ONE);}
+\DoxyCodeLine{424         \}}
+\DoxyCodeLine{425         l.sign = (sign == a.sign) ? 1 : -\/1;}
+\DoxyCodeLine{426 \textcolor{comment}{//        removeZero(l);}}
+\DoxyCodeLine{427         \textcolor{keywordflow}{return} l;}
+\DoxyCodeLine{428     \}}
+\DoxyCodeLine{429     \mbox{\hyperlink{class_biginteger}{Biginteger}} operator/ (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a96b56cdc7869f883f3f106999b16fbc8}{Divide}}(a);\}}
+\DoxyCodeLine{439     \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a70a556b9abf76ab8590a06537742646c}{Mod}}(\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{440         \mbox{\hyperlink{class_biginteger}{Biginteger}} quot = \mbox{\hyperlink{class_biginteger_a96b56cdc7869f883f3f106999b16fbc8}{Divide}}(a);}
+\DoxyCodeLine{441         \textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}}(quot.\mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}}(a));}
+\DoxyCodeLine{442     \}}
+\DoxyCodeLine{443     \mbox{\hyperlink{class_biginteger}{Biginteger}} operator\% (\textcolor{keyword}{const} \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \mbox{\hyperlink{class_biginteger_a70a556b9abf76ab8590a06537742646c}{Mod}}(a);\}}
+\DoxyCodeLine{448     \textcolor{keywordtype}{string} \mbox{\hyperlink{class_biginteger_abb6179b40128fd3531dda1a50d0479fb}{toString}}()\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{449         \textcolor{keywordflow}{if}(sign == 2)   \textcolor{keywordflow}{throw} \mbox{\hyperlink{class_null_exception}{NullException}}();}
+\DoxyCodeLine{450         \textcolor{keywordflow}{if}(sign == 0)   \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}0"{}};}
+\DoxyCodeLine{451         \textcolor{keywordtype}{string} ret = \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{452         \textcolor{keywordtype}{int} now = 0;}
+\DoxyCodeLine{453 }
+\DoxyCodeLine{454         \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < eff\_len -\/ 1; i++) \{}
+\DoxyCodeLine{455             \textcolor{keywordtype}{int} now = data[i];}
+\DoxyCodeLine{456             \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} j = 0; j < NUM\_GROUP\_SIZE; j++) \{}
+\DoxyCodeLine{457                 ret.append(1,(now \% 10) + \textcolor{charliteral}{'0'});}
+\DoxyCodeLine{458                 now /= 10;}
+\DoxyCodeLine{459             \}}
+\DoxyCodeLine{460         \}}
+\DoxyCodeLine{461         now = data[eff\_len -\/ 1];}
+\DoxyCodeLine{462         \textcolor{comment}{//处理最高位}}
+\DoxyCodeLine{463         \textcolor{keywordflow}{do} \{}
+\DoxyCodeLine{464             ret.append(1,(now \% 10)+\textcolor{charliteral}{'0'});}
+\DoxyCodeLine{465             now /= 10;}
+\DoxyCodeLine{466         \} \textcolor{keywordflow}{while}(now > 0);}
+\DoxyCodeLine{467         \textcolor{keywordflow}{if}(sign == -\/1)    ret += \textcolor{stringliteral}{"{}-\/"{}};}
+\DoxyCodeLine{468         std::reverse(ret.begin(),ret.end());}
+\DoxyCodeLine{469         \textcolor{keywordflow}{return} ret;}
+\DoxyCodeLine{470     \}}
+\DoxyCodeLine{471     \mbox{\hyperlink{class_biginteger}{\string~Biginteger}}() \{}
+\DoxyCodeLine{472         \textcolor{keywordflow}{if}(data != NULL) \{}
+\DoxyCodeLine{473             \textcolor{keyword}{delete} []data;}
+\DoxyCodeLine{474             data = NULL;}
+\DoxyCodeLine{475         \}}
+\DoxyCodeLine{476     \}}
+\DoxyCodeLine{477 \};}
+\DoxyCodeLine{478 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// BIGINT\_H}}
 
 \end{DoxyCode}
