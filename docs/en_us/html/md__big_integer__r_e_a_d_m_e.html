@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Biginteger: Biginteger&lt;br&gt;</title>
+<title>Biginteger: README</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -25,7 +25,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Biginteger<span id="projectnumber">&#160;1.10</span>
+   <div id="projectname">Biginteger<span id="projectnumber">&#160;1.20</span>
    </div>
   </td>
  </tr>
@@ -82,48 +82,50 @@ $(document).ready(function(){initNavTree('md__big_integer__r_e_a_d_m_e.html','')
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title"><a class="el" href="class_biginteger.html">Biginteger</a><br  />
- </div></div>
+  <div class="headertitle"><div class="title">README </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p >一个用C++写的用于学习的Biginteger类。</p>
+<div class="textblock"><p >Github上格式化可能有问题，推荐看docs/zh_cn/html/index.html<br  />
+ </p>
+<h2><a class="anchor" id="autotoc_md0"></a>
+Biginteger</h2>
+<p >一个用C++写的用于学习的Biginteger类。</p>
 <p >本人是中国江苏某三流大学计算机专业的学生，受到Java中BigInteger类的启发，自己用C++ 写了一个大整数类，目前功能还很不完善，只支持加、减、乘、比较大小而且暂不支持负数。</p>
 <p >关于具体使用方法，请参见docs/html，这是用doxygen自动生成的帮助文档。</p>
 <p >欢迎提出任何有益的意见和建议。</p>
-<p ><small><strike>当初写文档时都是用英文写的，现在早就懒得改了，希望见谅哈</strike></small> </p>
+<p ><small><strike>为了锻炼英语能力，当初写文档时都是用英文写的，现在早就懒得改了，希望见谅哈</strike></small> </p>
 <p >----------------------------------------------------------------------------------------------------------------------------&mdash;</p>
 <p >使用方法举例：</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><span class="keyword">using</span> std::cin;</div>
-<div class="line"><span class="keyword">using</span> std::cout;</div>
-<div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">    <span class="keywordtype">string</span> s1,s2;</div>
-<div class="line">    cin &gt;&gt; s1 &gt;&gt; s2;</div>
-<div class="line">    <a class="code hl_class" href="class_biginteger.html">Biginteger</a> b1(s1),b2(s2.c_str());</div>
-<div class="line">    <span class="keywordflow">try</span> {</div>
-<div class="line">        cout &lt;&lt; (b1 + b2).toString() &lt;&lt; <span class="charliteral">&#39;\n&#39;</span>;</div>
-<div class="line">        cout &lt;&lt; (b1 - b2).toString() &lt;&lt; <span class="charliteral">&#39;\n&#39;</span>;</div>
-<div class="line">        cout &lt;&lt; (b1 * b2).toString() &lt;&lt; <span class="charliteral">&#39;\n&#39;</span>;</div>
-<div class="line">        cout &lt;&lt; (b1 / b2).toString() &lt;&lt; <span class="charliteral">&#39;\n&#39;</span>;</div>
-<div class="line">        cout &lt;&lt; (b1.absolute() % b2.absolute()).toString() &lt;&lt; <span class="charliteral">&#39;\n&#39;</span>;</div>
-<div class="line">    } <span class="keywordflow">catch</span>(<a class="code hl_class" href="class_number_format_exception.html">NumberFormatException</a> &amp;e) {</div>
-<div class="line">        cout &lt;&lt; e.what();</div>
-<div class="line">    } <span class="keywordflow">catch</span>(<a class="code hl_class" href="class_div_by_zero_exception.html">DivByZeroException</a> &amp;e) {</div>
-<div class="line">        cout &lt;&lt; e.what();</div>
-<div class="line">    }</div>
-<div class="line">    <span class="keywordflow">return</span> 0;</div>
-<div class="line">}</div>
-<div class="ttc" id="aclass_biginteger_html"><div class="ttname"><a href="class_biginteger.html">Biginteger</a></div><div class="ttdef"><b>Definition:</b> Bigint.h:23</div></div>
-<div class="ttc" id="aclass_div_by_zero_exception_html"><div class="ttname"><a href="class_div_by_zero_exception.html">DivByZeroException</a></div><div class="ttdef"><b>Definition:</b> Exceptions.h:29</div></div>
-<div class="ttc" id="aclass_number_format_exception_html"><div class="ttname"><a href="class_number_format_exception.html">NumberFormatException</a></div><div class="ttdef"><b>Definition:</b> Exceptions.h:10</div></div>
-</div><!-- fragment --> <p >开发环境：</p>
+<pre>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using std::cin;
+using std::cout;
+int main() {
+    string s1,s2;
+    cin &gt;&gt; s1 &gt;&gt; s2;
+    <a class="el" href="class_biginteger.html">Biginteger</a> b1(s1),b2(s2.c_str());
+    try {
+        cout &lt;&lt; (b1 + b2).toString() &lt;&lt; '\n';
+        cout &lt;&lt; (b1 - b2).toString() &lt;&lt; '\n';
+        cout &lt;&lt; (b1 * b2).toString() &lt;&lt; '\n';
+        cout &lt;&lt; (b1 / b2).toString() &lt;&lt; '\n';
+        cout &lt;&lt; (b1.absolute() % b2.absolute()).toString() &lt;&lt; '\n';
+    } catch(NumberFormatException &amp;e) {
+        cout &lt;&lt; e.what();
+    } catch(DivByZeroException &amp;e) {
+        cout &lt;&lt; e.what();
+    }
+    return 0;
+}
+</pre> <p >开发环境：</p>
 <p >IDE:CodeBlocks 20.03 </p>
 <p >编译器:G++(MinGW 8.1.0) </p>
 <p >已测试平台:Windows 10 x64,Intel CPU</p>
-<p ><a href="https://blog.csdn.net/m0_51303687?spm=1011.2124.3001.5343">临时个人博客</a></p>
+<p ><a href="https://blog.csdn.net/m0_51303687?spm=1011.2124.3001.5343">临时个人博客地址</a></p>
 <p >-----------------------------------------------------------------------------------------------------------------------------------------------------&mdash;</p>
-<p >A BigInteger class written in C + + for learning.<br  />
+<p >There may be some formatting errors on Github.See docs/en_us/html/index.html<br  />
+ A BigInteger class written in C + + for learning.<br  />
  I am a computer major student of an ordinary university in Jiangsu, China. Inspired by the BigInteger class in Java, I have written this <a class="el" href="class_biginteger.html">Biginteger</a> class in C + +.<br  />
  At present, It is not perfect and only support addition, subtraction, multiplication and comparison.Negative numbers is NOT supported temporarily.<br  />
  For specific usage, please refer to docs / html, which is a help document automatically generated by Doxygen.<br  />
@@ -134,7 +136,7 @@ $(document).ready(function(){initNavTree('md__big_integer__r_e_a_d_m_e.html','')
 <p >IDE: CodeBlocks 20.03 </p>
 <p >Compiler: G + + (MinGW 8.1.0)</p>
 <p >Tested platforms: Windows 10 x64, Intel CPU</p>
-<p ><a href="https://blog.csdn.net/m0_51303687?spm=1011.2124.3001.5343">Temporary Personal Blog</a></p>
+<p ><a href="https://blog.csdn.net/m0_51303687?spm=1011.2124.3001.5343">Temporary Personal Blog Address</a></p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

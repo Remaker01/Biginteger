@@ -3,10 +3,10 @@
 #include <cstring>
 #include <string>
 #include <algorithm>
-#include <cmath>
+#include <cstddef>
 #include "Exceptions.h"
 using std::string;
-static const int NUM_GROUP_SIZE = 8,MOD_BASE = (int)1e8,KARA_THRESHOLD = 128;
+
 /**
  * It is a big integer class in C++.<br>
  * Since the C++ standard library has no big integer classes,I wrote this IMMATURE Biginteger class which
@@ -16,12 +16,13 @@ static const int NUM_GROUP_SIZE = 8,MOD_BASE = (int)1e8,KARA_THRESHOLD = 128;
  * All comments and suggestions beneficial to this project are welcome.
  * \note <ol><li>This class provides an internal attribute(which is a pointer to <em>int</em>) to store the big integer.
  * To increase the efficiency,the big integer will be divided into groups every eight digits.</li>
- * <li>In *complexity* of all functions:if there are no special notes,<em>n</em> represents the length of *this,and *m* represents 
+ * <li>In *complexity* of all functions:if there are no special notes,<em>n</em> represents the length of *this,and *m* represents
  * the length of another one, and *k=8*.
- * \version 1.10 (1.10.211226)
+ * \version 1.20 (1.20.220102)
  */
 class Biginteger {
   private:
+    static constexpr int NUM_GROUP_SIZE = 8,MOD_BASE = (int)1e8,KARA_THRESHOLD = 128;
     int *data;
     //sign == 0:0；-1:负数；1：正数；2：无效，说明此尚未被正确构造，仍是空值
     int eff_len,sign;
@@ -29,16 +30,18 @@ class Biginteger {
     Biginteger(int effLen):eff_len(0),sign(2) {
     	data = new int[effLen]();
 	}
-    inline int check(const char *s,int len) {
+    inline static int check(const char *s,int len) {
+        if(s[0] == '-'&&len == 1)
+            return 0;
+        if(s[0] != '-'&& !(s[0] >= '0'&& s[0] <= '9'))
+            return 0;
         for(int i = 1; i < len; i++) {
             if(!(s[i] >= '0'&&s[i] <= '9'))    return i;
         }
-        //第一个是负号或数字，如果是负号，则长度必须大于一。后面的必须全部是数字。
-        if(s[0] == '-')	   return (len != 1) ? -1 : 0;
-        else	return (s[0] >= '0'&&s[0] <= '9') ? -1 : 0;
+        return -1;
     }
     /*删除前导0*/
-    inline int firNoneZero(const char *s,int len) {
+    inline static int firNoneZero(const char *s,int len) {
         int i;
         for(i = (s[0] == '-') ? 1 : 0; i < len - 1&&s[i] == '0'; i++);
         return i;
@@ -91,49 +94,51 @@ class Biginteger {
         }
         //前导零的特殊处理。注意a==b的特殊情况
         //注意：由于上面统一用位数较多数的位数初始化，所以此处可能不知要删1个
-        ret.removeZero();      
+        ret.removeZero();
         return ret;
     }
-    //除以2，方便除法时使用二分。
-    Biginteger divByTwo() const {
-        Biginteger ret(*this);
-        bool carry = 0; //进位指示器
-        for(int i = eff_len - 1; i >= 0; i--) {
-            int now = data[i] >> 1;
-            if(carry) {
-                now = (now + (MOD_BASE >> 1)) % MOD_BASE;
-            }
-            ret.data[i] = now;
-            carry = data[i] & 1;
+    /*大数与int相乘，用于除法*/
+    Biginteger mulWithInt(int a) {
+        if(a == 0||sign == 0)    return Biginteger("0");
+        int carry = 0;
+        Biginteger ret(eff_len + 1);
+        if(a > 0)    ret.sign = sign;
+		else {
+			ret.sign = -sign;
+			a = -a;
+		}
+		ret.eff_len = eff_len;
+        for (int i = 0; i < eff_len; i++) {
+            int64_t now = (int64_t)data[i] * a + carry;
+            ret.data[i] = now % MOD_BASE;
+            carry = now / MOD_BASE;
+        }
+        if (carry != 0) {
+            ret.data[ret.eff_len++] = carry;
         }
         ret.removeZero();
         return ret;
     }
-      //取得低位 
-    Biginteger getLower(int len) const {
-    	if(len <= 0)	return Biginteger("0");
+    //获取[st,end]间的数位
+    Biginteger getBits(int st,int end) const {
+        int len = end - st + 1;
+        if(len <= 0)	return Biginteger("0");
         if(len >= eff_len)    return *this;
         Biginteger ret(len);
         ret.eff_len = len;
-        ret.sign = 1;
-        for(int i = 0; i < len; i++) {
-            ret.data[i] = data[i];
+        ret.sign = sign;
+        for (int i = 0; i < len; i++) {
+            ret.data[i] = data[i + st];
         }
-        return ret; 
+        return ret;
+    }
+    //取得低位
+    Biginteger getLower(int len) const {
+    	return getBits(0,len - 1);
     }
 	//取得高位，自动补0
     Biginteger getUpper(int len) const {
-    	if(len <= 0)	return Biginteger("0");
-        if(len >= eff_len)    return *this;
-        Biginteger ret(len);
-        ret.eff_len = len;
-        ret.sign = 1;
-        int dif = eff_len - len;
-        for(int i = 0; i < len; i++) {
-            ret.data[i] = data[i + dif];
-        }
-        ret.removeZero();
-        return ret;
+        return getBits(eff_len - len,eff_len - 1);
     }
     Biginteger addZero(unsigned int n) const {
         int len = eff_len + n;
@@ -153,7 +158,7 @@ class Biginteger {
         for(int i = 0; i < eff_len; i++) {  //this
             int carry = 0;
             for(int j = 0; j < aLen; j++) {  //a
-                long long now = (long long)data[i] * a.data[j] + carry + ret.data[i + j];
+                int64_t now = (int64_t)data[i] * a.data[j] + carry + ret.data[i + j];
                 carry = now / MOD_BASE;
                 ret.data[i + j]=now % MOD_BASE;
             }
@@ -179,14 +184,14 @@ class Biginteger {
     /**
      * Construct an empty big integer with the length of 0.
      */
-    Biginteger():data(NULL),eff_len(0),sign(2) {}
+    Biginteger():data(nullptr),eff_len(0),sign(2) {}
     /**
      * Construct a big integer with a string constant
      * \param s the string constant to be constructed.
      * \throw if the string constant **s** is not a legal integer,throws NumberFormatException.
      */
     Biginteger(const char *s) {
-        if(s == NULL)    throw NullException();
+        if(s == nullptr)    throw NullException();
         int len = strlen(s),chkres=check(s,len);
         if(chkres != -1)    throw NumberFormatException(s[chkres]);
         int loc = firNoneZero(s,len);
@@ -211,7 +216,7 @@ class Biginteger {
         char *S = new char[str.length() + 1];
         strcpy(S,str.c_str());
         new(this) Biginteger(S);
-        if(S != NULL)	   delete S;
+        if(S != nullptr)	   delete S;
     }
     /**
       * Construct a big integer with another big integer(Copy constructor).
@@ -398,33 +403,59 @@ class Biginteger {
     }
     Biginteger operator* (const Biginteger &a) const {return Multiply(a);}
     /**
-     * Divide the integer by another one.Using <strong>operator/ </strong>has the same effect.
+     * Divide the integer by another one.Using <strong>operator/ </strong>has the same effect.<br>
+     * **Complexity**:Up to O(m(n - m) / k)
      * \param a the divisor.
      * \return the result((*this) / a).
      * \throws <em>DivByZeroException</em> if the divisor is zero.
-     * \note <em>Experimental</em>.
      */
     Biginteger Divide(const Biginteger &a) const {
     	if(sign == 2||a.sign == 2)	   throw NullException();
         //除数为0
         if(a.sign == 0)    throw DivByZeroException();
-		const Biginteger ONE("1"),Divided(absolute()),Divisor(a.absolute());
-		Biginteger l(ONE),r(Divided.divByTwo()),mid;
+        Biginteger divided(absolute()),divisor(a.absolute());
         //被除数更小
-        if(Divisor > Divided)      return Biginteger("0");
-        if(Divisor == ONE)    l = Divided;
-        else if(Divisor == ONE.Add(ONE))    l = r;
-        else {
-            while (l < r) {
-                mid = (l.Add(r)).divByTwo();
-                if(mid.Multiply(Divisor) > Divided)    r = mid;
-                else	l = mid.Add(ONE);
-            }
-            l = l.Subt(ONE);
+        if(divisor > divided)      return Biginteger("0");
+        int highest = divisor.data[divisor.eff_len - 1];
+        int d = MOD_BASE / (highest + 1);
+        //调整除数，下面使用Knuth除法
+        divided = divided.mulWithInt(d);
+        divisor = divisor.mulWithInt(d);
+        //注意长度可能改变。以下一切均以调整后为准
+        int aLen = divisor.eff_len,len = divided.eff_len;
+        highest = divisor.data[aLen - 1];
+        Biginteger ret(len - aLen + 1);
+        if(len == aLen) {
+            ret.eff_len = 1;
+            ret.data[0] = 1;
         }
-        l.sign = (sign == a.sign) ? 1 : -1;
-//        removeZero(l);
-        return l;
+        for(int i = len - aLen - 1; i >= 0; i--) {
+            //从第i位开始向高位取aLen+1位。循环每执行一次，相当于进行一次试商（这里是估商）
+            Biginteger part = divided.getBits(i,i + aLen);
+            //估计的商，一开始估为上界
+            int q = ((int64_t)part.data[aLen] * MOD_BASE + part.data[aLen - 1]) / highest;
+            //注意取完后再去前导零，否则产生不可预见的后果
+            part.removeZero();
+            //当前余数
+            Biginteger rmder = part.Subt(divisor.mulWithInt(q));
+            //调整。不用Knuth除法就是将下面改成二分查找
+            while(rmder.sign < 0) {
+                rmder = rmder.Add(divisor);
+                q--;
+            }
+            int j,k;
+            //拷贝数组，注意清0
+            for (j = i,k = 0; k < rmder.eff_len; j++, k++)
+                divided.data[j] = rmder.data[k];
+            for(; j < i + aLen; j++)
+                divided.data[j] = 0;
+            ret.data[i] = q % MOD_BASE;
+            ret.data[i+1] += q / MOD_BASE;    //余数的处理
+        }
+        ret.eff_len = len - aLen;
+        if(ret.data[len-aLen] > 0)    ret.eff_len++;
+        ret.sign = (sign == a.sign) ? 1 : -1;
+        return ret;
     }
     Biginteger operator/ (const Biginteger &a) const {return Divide(a);}
     /**
@@ -452,7 +483,7 @@ class Biginteger {
 		int now = 0;
 
 		for(int i = 0; i < eff_len - 1; i++) {
-			int now = data[i];
+			now = data[i];
 			for(int j = 0; j < NUM_GROUP_SIZE; j++) {
 				ret.append(1,(now % 10) + '0');
 				now /= 10;
@@ -469,9 +500,9 @@ class Biginteger {
 		return ret;
     }
     ~Biginteger() {
-		if(data != NULL) {
+		if(data != nullptr) {
     		delete []data;
-    		data = NULL;
+    		data = nullptr;
 		}
 	}
 };

@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "Biginteger", "index.html", [
-    [ "Biginteger<br>", "md__big_integer__r_e_a_d_m_e.html", null ],
+    [ "README", "md__big_integer__r_e_a_d_m_e.html", null ],
     [ "类", "annotated.html", [
       [ "类列表", "annotated.html", "annotated_dup" ],
       [ "类索引", "classes.html", null ],

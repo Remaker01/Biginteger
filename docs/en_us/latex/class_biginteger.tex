@@ -86,7 +86,7 @@ It is a big integer class in C++.~\newline
 \end{DoxyEnumerate}
 \end{DoxyNote}
 \begin{DoxyVersion}{Version}
-1.\+10 (1.\+10.\+211226) 
+1.\+20 (1.\+20.\+220102) 
 \end{DoxyVersion}
 
 
@@ -183,7 +183,8 @@ Compare the big integer to another one.
 \doxysubsubsection{\texorpdfstring{Divide()}{Divide()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Divide (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-Divide the integer by another one.\+Using {\bfseries{operator/ }}has the same effect. 
+Divide the integer by another one.\+Using {\bfseries{operator/ }}has the same effect.~\newline
+ {\bfseries{Complexity}}\+:Up to O(m(n -\/ m) / k) 
 \begin{DoxyParams}{Parameters}
 {\em a} & the divisor. \\
 \hline
@@ -196,9 +197,6 @@ the result(($\ast$this) / a).
 {\em $<$em$>$\+Div\+By\+Zero\+Exception$<$/em$>$} & if the divisor is zero. \\
 \hline
 \end{DoxyExceptions}
-\begin{DoxyNote}{Note}
-{\itshape Experimental}. 
-\end{DoxyNote}
 \mbox{\Hypertarget{class_biginteger_a70a556b9abf76ab8590a06537742646c}\label{class_biginteger_a70a556b9abf76ab8590a06537742646c}} 
 \index{Biginteger@{Biginteger}!Mod@{Mod}}
 \index{Mod@{Mod}!Biginteger@{Biginteger}}
