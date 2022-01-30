@@ -14,7 +14,7 @@ public:
 		strcpy(info,"Wrong Character.");
 		info[16] = 0;
 	}
-	NumberFormatException(char ch) {
+	explicit NumberFormatException(char ch) {
 		strcpy(info,"Wrong Character: ");
 		info[17] = ch;
 		info[18] = 0;
