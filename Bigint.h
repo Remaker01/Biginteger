@@ -223,12 +223,30 @@ class Biginteger {
         eff_len = another.eff_len;
         sign = another.sign;
         data = new int[another.eff_len]();
-        for(int i = 0; i < eff_len; i++)    data[i] = another.data[i];
+        std::copy(another.data,another.data + another.eff_len,data);
+    }
+    //移动构造函数
+    Biginteger(Biginteger &&another) {
+        eff_len = another.eff_len;
+        sign = another.sign;
+        data = another.data;
+        another.data = nullptr;  //源指针必须置空
     }
     Biginteger &operator=(const Biginteger &another) {
         if (this != &another) {  //加上判断，防止自己赋给自己
-            if (data)    delete data;  //如果原来有数据，则释放数据
+            if (data != nullptr)    delete [] data;  //如果原来有数据，则释放数据
             new(this) Biginteger(another);
+        }
+        return *this;
+    }
+
+    Biginteger &operator=(Biginteger &&another) noexcept {
+        if (this != &another) {
+            if(data != nullptr)    delete [] data;
+            eff_len = another.eff_len;
+            sign = another.sign;
+            data = another.data;
+            another.data = nullptr;
         }
         return *this;
     }
