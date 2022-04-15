@@ -22,10 +22,10 @@ using std::string;
  */
 class Biginteger {
   private:
-    static constexpr int NUM_GROUP_SIZE = 8,MOD_BASE = (int)1e8,KARA_THRESHOLD = 128;
+    static constexpr int NUM_GROUP_SIZE = 8,BASE = (int)1e8,KARA_THRESHOLD = 128;
     int *data;
     //sign == 0:0；-1:负数；1：正数；2：无效，说明此尚未被正确构造，仍是空值
-    int eff_len,sign;
+    int eff_len,sign,length = -1;
     //构造有效长度为effLen位的Biginteger
     explicit Biginteger(int effLen):eff_len(0),sign(2) {
         data = new int[effLen]();
@@ -62,8 +62,8 @@ class Biginteger {
     inline void addLefts(const Biginteger &a, int8_t &carry, int minlen) {
         for(int i = minlen; i < a.eff_len; i++) {
             int now = a.data[i] + carry;
-            data[eff_len++] = now % MOD_BASE;
-            carry = (int8_t)(now / MOD_BASE);
+            data[eff_len++] = now % BASE;
+            carry = (int8_t)(now / BASE);
         }
     }
     inline void removeZero() {
@@ -78,7 +78,7 @@ class Biginteger {
             int now = data[i] - small.data[i] - carry;
             if(now < 0) {
                 carry = 1;
-                now = MOD_BASE + now;
+                now = BASE + now;
             }
             else    carry = 0;
             ret.data[ret.eff_len++] = now;
@@ -87,7 +87,7 @@ class Biginteger {
             int now = data[i] - carry;
             if(now < 0) {
                 carry = 1;
-                now = MOD_BASE + now;
+                now = BASE + now;
             }
             else    carry = 0;
             ret.data[ret.eff_len++] = now;
@@ -110,8 +110,8 @@ class Biginteger {
 		ret.eff_len = eff_len;
         for (int i = 0; i < eff_len; i++) {
             int64_t now = (int64_t)data[i] * a + carry;
-            ret.data[i] = now % MOD_BASE;
-            carry = now / MOD_BASE;
+            ret.data[i] = now % BASE;
+            carry = now / BASE;
         }
         if (carry != 0) {
             ret.data[ret.eff_len++] = carry;
@@ -125,9 +125,10 @@ class Biginteger {
         Biginteger ret(len);
         ret.eff_len = len;
         ret.sign = sign;
-        for (int i = 0; i < len; i++) {
-            ret.data[i] = data[i + st];
-        }
+//        for (int i = 0; i < len; i++) {
+//            ret.data[i] = data[i + st];
+//        }
+        std::copy(data + st,data + st + len,ret.data);
         if (!needZeros)    ret.removeZero();
         return ret;
     }
@@ -152,14 +153,14 @@ class Biginteger {
     Biginteger classicMul(const Biginteger &a) const {
     	int aLen = a.eff_len;
         Biginteger ret(eff_len + aLen);  //存放结果
-        
+
 		ret.eff_len = eff_len + aLen - 1;
         for(int i = 0; i < eff_len; i++) {  //this
             int carry = 0;
             for(int j = 0; j < aLen; j++) {  //a
                 int64_t now = (int64_t)data[i] * a.data[j] + carry + ret.data[i + j];
-                carry = (int)(now / MOD_BASE);
-                ret.data[i + j]=now % MOD_BASE;
+                carry = (int)(now / BASE);
+                ret.data[i + j]=now % BASE;
             }
             if(carry != 0)    ret.data[i + aLen] = carry;
         }
@@ -171,12 +172,12 @@ class Biginteger {
     //Karatsuba乘法
     Biginteger Karatsuba(const Biginteger &a) const {
         int half = (std::max(eff_len,a.eff_len) + 1) / 2;
-        Biginteger xh = getUpper(eff_len - half),xl = getLower(half);  //第一个因数 
+        Biginteger xh = getUpper(eff_len - half),xl = getLower(half);  //第一个因数
         Biginteger yh = a.getUpper(a.eff_len - half),yl = a.getLower(half); //第二个因数
         //pl=xl * yl  ph=xh * yh
         Biginteger pl = xl.Multiply(yl);
 		Biginteger ph = xh.Multiply(yh);
-		//res= pl + ph * MOD_BASE^(half * 2) + ((xl + xh)(yl + yh) - pl - ph) * MOD_BASE(half)
+		//res= pl + ph * BASE^(half * 2) + ((xl + xh)(yl + yh) - pl - ph) * BASE(half)
         return pl + ph.addZero(half * 2) + ((xl + xh).Multiply(yl + yh) - pl - ph).addZero(half);
     }
     Biginteger divByTwo() const {
@@ -185,7 +186,7 @@ class Biginteger {
        for(int i = eff_len - 1; i >= 0; i--) {
            int now = data[i] >> 1;
            if(carry) {
-               now = (now + (MOD_BASE / 2)) % MOD_BASE;
+               now = (now + (BASE / 2)) % BASE;
            }
            ret.data[i] = now;
            carry = data[i] & 1;
@@ -199,7 +200,7 @@ class Biginteger {
      */
     Biginteger():data(nullptr),eff_len(0),sign(2) {}
     /**
-     * Construct a big integer with a string constant
+     * Construct a big integer with a C-style string constant
      * \param s the string constant to be constructed.
      * \throw if the string constant **s** is not a legal integer,throws NumberFormatException.
      */
@@ -221,10 +222,10 @@ class Biginteger {
         else    convert(s + loc,len - loc);
     }
     /**
-      * Construct a big integer with a string constant.
+      * Construct a big integer with a std::string constant.
       * Note that the parameter *std::string* will be converted to a C-style string constant.
-      * \param str the string constant to be constructed.
-      * \throw if the string constant **s** is not a legal integer,throws NumberFormatException.
+      * \param str  the string constant to be constructed.
+      * \throw if  the string constant **s** is not a legal integer,throws NumberFormatException.
       */
     Biginteger(const string &str) {
         new(this) Biginteger(str.c_str());
@@ -270,12 +271,12 @@ class Biginteger {
      * \param a the big integer to compare.
      * \return 1 if this big integer is larger than **a**,0 if equal,and -1 if smaller.
      */
-    inline int compare(const Biginteger &a) const {
+    inline int compareTo(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
         int alen = a.eff_len;
         //一个为负，一个不为负
-        if(sign < 0&&a.sign >= 0)    return -1;
-        if(sign > 0&&a.sign <= 0)      return 1;
+        if(sign < 0&&a.sign >= 0)       return -1;
+        if(sign > 0&&a.sign <= 0)       return 1;
         if(sign == 0&&a.sign != 0)      return -a.sign;
         int ret = 0;
         if(eff_len > a.eff_len)         ret = 1;
@@ -296,17 +297,19 @@ class Biginteger {
         if(sign < 0)    ret = -ret;
         return ret;
     }
-    inline bool operator< (const Biginteger &a) const  {return compare(a) < 0;}
-    inline bool operator> (const Biginteger &a) const  {return compare(a) > 0;}
-    inline bool operator>= (const Biginteger &a) const {return compare(a) >= 0;}
-	inline bool operator<= (const Biginteger &a) const {return compare(a) <= 0;}
-    inline bool operator== (const Biginteger &a) const {return compare(a) == 0;}
-    inline bool operator!= (const Biginteger &a) const {return compare(a) != 0;}
+    inline bool operator< (const Biginteger &a) const  {return compareTo(a) < 0;}
+    inline bool operator> (const Biginteger &a) const  {return compareTo(a) > 0;}
+    inline bool operator>= (const Biginteger &a) const {return compareTo(a) >= 0;}
+	inline bool operator<= (const Biginteger &a) const {return compareTo(a) <= 0;}
+    inline bool operator== (const Biginteger &a) const {return compareTo(a) == 0;}
+    inline bool operator!= (const Biginteger &a) const {return compareTo(a) != 0;}
     /**
      * Get the length of the big integer.
      * \return the length of the big integer.
      */
-    inline int getLength() const {
+    inline int getLength() {
+        if(length >=0)
+            return length;
         int highest = data[eff_len - 1];
 		if(sign == 0)    return 1;
         int lg = 0;
@@ -314,7 +317,7 @@ class Biginteger {
             highest /= 10;
             lg++;
         }
-        return (eff_len - 1) * NUM_GROUP_SIZE + lg;
+        return length = ((eff_len - 1) * NUM_GROUP_SIZE + lg);
     }
     /**
      * Find the opposite number of the big integer.
@@ -359,8 +362,8 @@ class Biginteger {
 		Biginteger ret(std::max(eff_len,a.eff_len) + 1);  //待返回结果
 		for(int i = 0; i < minlen; i++) {
             int now = data[i] + a.data[i] + carry;
-            ret.data[ret.eff_len++] = now % MOD_BASE;
-            carry = (int8_t)(now / MOD_BASE);
+            ret.data[ret.eff_len++] = now % BASE;
+            carry = (int8_t)(now / BASE);
 		}
 		if(minlen == eff_len)    ret.addLefts(a,carry,minlen);
 		else    ret.addLefts(*this,carry,minlen);
@@ -403,7 +406,7 @@ class Biginteger {
             suber.sign = subee.sign = 1;
             std::swap(suber,subee);
         }
-        int tmp = suber.compare(subee);
+        int tmp = suber.compareTo(subee);
         Biginteger ret = (tmp < 0) ? subee.subtWith(suber) : suber.subtWith(subee);
         ret.sign = tmp;
         return ret;
@@ -445,13 +448,13 @@ class Biginteger {
         Biginteger divided(absolute()),divisor(a.absolute());
         //被除数更小
         if(divisor > divided)      return Biginteger("0");
-        if(divisor == Biginteger("1"))    return (sign == a.sign) ? *this : Negate();
-        if(divisor == Biginteger("2")) {
+        if(divisor == "1")    return (sign == a.sign) ? *this : Negate();
+        if(divisor == "2") {
             Biginteger ret = divided.divByTwo();
             return (sign == a.sign) ? ret : ret.Negate();
         }
         int highest = divisor.data[divisor.eff_len - 1];
-        int d = MOD_BASE / (highest + 1);
+        int d = BASE / (highest + 1);
         //调整除数，下面使用Knuth除法
         divided = divided.mulWithInt(d);
         divisor = divisor.mulWithInt(d);
@@ -467,14 +470,14 @@ class Biginteger {
             //从第i位开始向高位取aLen+1位。循环每执行一次，相当于进行一次试商（这里是估商）
             Biginteger part = divided.getBits(i,1 + aLen,true);
             //估计的商，一开始估为上界
-            int q = ((int64_t)part.data[aLen] * MOD_BASE + part.data[aLen - 1]) / highest;
+            int q = (int)(((int64_t)part.data[aLen] * BASE + part.data[aLen - 1]) / highest);
             //注意取完后再去前导零，否则产生不可预见的后果
             part.removeZero();
             //当前余数
             Biginteger rmder = part.Subt(divisor.mulWithInt(q));
             //调整。不用Knuth除法就是将下面改成二分查找
             while(rmder.sign < 0) {
-                rmder = rmder.Add(divisor);
+                rmder = std::move(rmder.Add(divisor));
                 q--;
             }
             int j,k;
@@ -483,8 +486,8 @@ class Biginteger {
                 divided.data[j] = rmder.data[k];
             for(; j < i + aLen; j++)
                 divided.data[j] = 0;
-            ret.data[i] = q % MOD_BASE;
-            ret.data[i+1] += q / MOD_BASE;    //余数的处理
+            ret.data[i] = q % BASE;
+            ret.data[i+1] += q / BASE;    //余数的处理
         }
         ret.eff_len = len - aLen;
         if(ret.data[len-aLen] > 0)    ret.eff_len++;
