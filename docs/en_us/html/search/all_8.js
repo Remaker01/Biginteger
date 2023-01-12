@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tostring_0',['toString',['../class_biginteger.html#abb6179b40128fd3531dda1a50d0479fb',1,'Biginteger']]]
+  ['subt_0',['subt',['../class_biginteger.html#a7f2dcafc4999102db88232a52954b32d',1,'Biginteger']]]
 ];

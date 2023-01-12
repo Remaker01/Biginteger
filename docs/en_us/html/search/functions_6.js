@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['subt_0',['Subt',['../class_biginteger.html#a7324a7f59695d56feb6cd6cfac10647e',1,'Biginteger']]]
+  ['negate_0',['negate',['../class_biginteger.html#a6ca9d1384b4807aae25881ec80a644da',1,'Biginteger']]]
 ];

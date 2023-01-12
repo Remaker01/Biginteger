@@ -1,5 +1,6 @@
 #ifndef BIGINT_H
 #define BIGINT_H
+#include <stdio.h>
 #include <cstring>
 #include <string>
 #include <algorithm>
@@ -24,9 +25,9 @@ class Biginteger {
   private:
     static constexpr int NUM_GROUP_SIZE = 8,BASE = (int)1e8,KARA_THRESHOLD = 128;
     int *data;
-    //sign == 0:0£»-1:¸ºÊı£»1£ºÕıÊı£»2£ºÎŞĞ§£¬ËµÃ÷´ËÉĞÎ´±»ÕıÈ·¹¹Ôì£¬ÈÔÊÇ¿ÕÖµ
+    //sign == 0:0ï¼›-1:è´Ÿæ•°ï¼›1ï¼šæ­£æ•°ï¼›2ï¼šæ— æ•ˆï¼Œè¯´æ˜æ­¤å°šæœªè¢«æ­£ç¡®æ„é€ ï¼Œä»æ˜¯ç©ºå€¼
     int eff_len,sign,length = -1;
-    //¹¹ÔìÓĞĞ§³¤¶ÈÎªeffLenÎ»µÄBiginteger
+    //æ„é€ æœ‰æ•ˆé•¿åº¦ä¸ºeffLenä½çš„Biginteger
     explicit Biginteger(int effLen):eff_len(0),sign(2) {
         data = new int[effLen]();
     }
@@ -36,17 +37,18 @@ class Biginteger {
         if(s[0] != '-'&& !(s[0] >= '0'&& s[0] <= '9'))
             return 0;
         for(int i = 1; i < len; i++) {
-            if(!(s[i] >= '0'&&s[i] <= '9'))    return i;
+            if(!(s[i] >= '0'&&s[i] <= '9'))
+                return i;
         }
         return -1;
     }
-    /*É¾³ıÇ°µ¼0*/
+    /*åˆ é™¤å‰å¯¼0*/
     inline static int firNoneZero(const char *s,int len) {
         int i;
         for(i = (s[0] == '-') ? 1 : 0; i < len - 1&&s[i] == '0'; i++);
         return i;
     }
-    /*×ª»»ÎªintÊı×é£¬·½±ã³Ë·¨Óë¼Ó·¨ÔËËã*/
+    /*è½¬æ¢ä¸ºintæ•°ç»„ï¼Œæ–¹ä¾¿ä¹˜æ³•ä¸åŠ æ³•è¿ç®—*/
     inline void convert(const char *s,int len) {
         int k = 0,mini = (s[0] == '-') ? 1 : 0;
         for(int i = len-1; i >= mini; i -= NUM_GROUP_SIZE) {
@@ -58,7 +60,7 @@ class Biginteger {
             data[k++] = now;
         }
     }
-    /*´¦Àí¼Ó·¨Ê£ÏÂµÄÎ»Êı¡£aÎªÎ»Êı½Ï¶àµÄÊı*/
+    /*å¤„ç†åŠ æ³•å‰©ä¸‹çš„ä½æ•°ã€‚aä¸ºä½æ•°è¾ƒå¤šçš„æ•°*/
     inline void addLefts(const Biginteger &a, int8_t &carry, int minlen) {
         for(int i = minlen; i < a.eff_len; i++) {
             int now = a.data[i] + carry;
@@ -70,9 +72,9 @@ class Biginteger {
         while(data[eff_len - 1] == 0&&eff_len > 1)
             eff_len--;
     }
-    /*´¦Àí¼õ·¨¡£ÔÚ´Ë´¦Ìá¹©Í³Ò»½Ó¿ÚÊÇÒòÎª½á¹û¿ÉÕı¿É¸º*/
+    /*å¤„ç†å‡æ³•ï¿½*/
     Biginteger subtWith(const Biginteger &small) const {
-        int8_t carry = 0;  //ÍËÎ»
+        int8_t carry = 0;  //ï¿½ï¿½Î»
         Biginteger ret(eff_len);
         for(int i = 0; i < small.eff_len; i++) {
             int now = data[i] - small.data[i] - carry;
@@ -82,7 +84,7 @@ class Biginteger {
             }
             else    carry = 0;
             ret.data[ret.eff_len++] = now;
-        }//´¦ÀíºóÃæ¼¸Î»
+        }//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ¼¸Î»
         for(int i = small.eff_len; i < eff_len; i++) {
             int now = data[i] - carry;
             if(now < 0) {
@@ -92,17 +94,17 @@ class Biginteger {
             else    carry = 0;
             ret.data[ret.eff_len++] = now;
         }
-        //Ç°µ¼ÁãµÄÌØÊâ´¦Àí¡£×¢Òâa==bµÄÌØÊâÇé¿ö
-        //×¢Òâ£ºÓÉÓÚÉÏÃæÍ³Ò»ÓÃÎ»Êı½Ï¶àÊıµÄÎ»Êı³õÊ¼»¯£¬ËùÒÔ´Ë´¦¿ÉÄÜ²»ÖªÒªÉ¾1¸ö
+        //Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â´¦ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½a==bï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //×¢ï¿½â£ºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³Ò»ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ï¶ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ë´ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ÖªÒªÉ¾1ï¿½ï¿½
         ret.removeZero();
         return ret;
     }
-    /*´óÊıÓëintÏà³Ë£¬ÓÃÓÚ³ı·¨*/
+    /*å¤§æ•°ä¸intç›¸ä¹˜ï¼Œç”¨äºé™¤æ³•*/
     Biginteger mulWithInt(int a) {
         if(a == 0||sign == 0)    return Biginteger("0");
         int carry = 0;
-        Biginteger ret(eff_len + 1);
-        if(a >= 0)    ret.sign = sign;
+        Biginteger ret(eff_len + 2);
+        if(a > 0)    ret.sign = sign;
 		else {
 			ret.sign = -sign;
 			a = -a;
@@ -118,25 +120,23 @@ class Biginteger {
         }
         return ret;
     }
-    //»ñÈ¡ÊıÎ»
+    //è·å–æ•°ä½
     Biginteger getBits(int st,int len,bool needZeros = false) const {
         if(len <= 0)	return Biginteger("0");
         if(st + len > eff_len)    return *this;
         Biginteger ret(len);
         ret.eff_len = len;
         ret.sign = sign;
-//        for (int i = 0; i < len; i++) {
-//            ret.data[i] = data[i + st];
-//        }
         std::copy(data + st,data + st + len,ret.data);
-        if (!needZeros)    ret.removeZero();
+        if (!needZeros)
+            ret.removeZero();
         return ret;
     }
-    //È¡µÃµÍÎ»
+    //È¡ï¿½Ãµï¿½Î»
     Biginteger getLower(int len) const {
     	return getBits(0,len);
     }
-	//È¡µÃ¸ßÎ»£¬×Ô¶¯²¹0
+	//È¡ï¿½Ã¸ï¿½Î»ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½0
     Biginteger getUpper(int len) const {
         return getBits(eff_len - len,len);
     }
@@ -152,7 +152,7 @@ class Biginteger {
     }
     Biginteger classicMul(const Biginteger &a) const {
     	int aLen = a.eff_len;
-        Biginteger ret(eff_len + aLen);  //´æ·Å½á¹û
+        Biginteger ret(eff_len + aLen);  //ï¿½ï¿½Å½ï¿½ï¿½
 
 		ret.eff_len = eff_len + aLen - 1;
         for(int i = 0; i < eff_len; i++) {  //this
@@ -169,20 +169,20 @@ class Biginteger {
         ret.removeZero();
         return ret;
     }
-    //Karatsuba³Ë·¨
+    //Karatsubaä¹˜æ³•
     Biginteger Karatsuba(const Biginteger &a) const {
         int half = (std::max(eff_len,a.eff_len) + 1) / 2;
-        Biginteger xh = getUpper(eff_len - half),xl = getLower(half);  //µÚÒ»¸öÒòÊı
-        Biginteger yh = a.getUpper(a.eff_len - half),yl = a.getLower(half); //µÚ¶ş¸öÒòÊı
+        Biginteger xh = getUpper(eff_len - half),xl = getLower(half);  //ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        Biginteger yh = a.getUpper(a.eff_len - half),yl = a.getLower(half); //ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         //pl=xl * yl  ph=xh * yh
-        Biginteger pl = xl.Multiply(yl);
-		Biginteger ph = xh.Multiply(yh);
+        Biginteger pl = xl.multiply(yl);
+		Biginteger ph = xh.multiply(yh);
 		//res= pl + ph * BASE^(half * 2) + ((xl + xh)(yl + yh) - pl - ph) * BASE(half)
-        return pl + ph.addZero(half * 2) + ((xl + xh).Multiply(yl + yh) - pl - ph).addZero(half);
+        return pl + ph.addZero(half * 2) + ((xl + xh).multiply(yl + yh) - pl - ph).addZero(half);
     }
     Biginteger divByTwo() const {
        Biginteger ret(*this);
-       bool carry = 0; //½øÎ»Ö¸Ê¾Æ÷
+       bool carry = 0; //ï¿½ï¿½Î»Ö¸Ê¾ï¿½ï¿½
        for(int i = eff_len - 1; i >= 0; i--) {
            int now = data[i] >> 1;
            if(carry) {
@@ -213,17 +213,16 @@ class Biginteger {
         eff_len = (len - loc + NUM_GROUP_SIZE -1) / NUM_GROUP_SIZE;
         data = new int[eff_len]();
         sign = (s[0] == '-') ? -1 : 1;
-        //0µÄÌØÊâ´¦Àí
+        //0çš„ç‰¹æ®Šå¤„ç†
         if(strcmp(s + loc,"0") == 0||strcmp(s + loc,"-0") == 0) {
             data[0] = 0;
             sign = 0;
         }
-        //×¢ ³¤¶È²»ÊÇÔ­À´µÄ×Ö·û´®³¤¶ÈÁË
+        //æ³¨ é•¿åº¦ä¸æ˜¯åŸæ¥çš„å­—ç¬¦ä¸²é•¿åº¦äº†
         else    convert(s + loc,len - loc);
     }
     /**
       * Construct a big integer with a std::string constant.
-      * Note that the parameter *std::string* will be converted to a C-style string constant.
       * \param str  the string constant to be constructed.
       * \throw if  the string constant **s** is not a legal integer,throws NumberFormatException.
       */
@@ -233,23 +232,23 @@ class Biginteger {
     /**
       * Construct a big integer with another big integer(Copy constructor).
       */
-      //¿½±´¹¹Ôìº¯Êı
+      //æ‹·è´æ„é€ å‡½æ•°
     Biginteger(const Biginteger &another) {
         eff_len = another.eff_len;
         sign = another.sign;
-        data = new int[another.eff_len]();
+        data = new int[another.eff_len];
         std::copy(another.data,another.data + another.eff_len,data);
     }
-    //ÒÆ¶¯¹¹Ôìº¯Êı
+    //ç§»åŠ¨æ„é€ å‡½æ•°
     Biginteger(Biginteger &&another) {
         eff_len = another.eff_len;
         sign = another.sign;
         data = another.data;
-        another.data = nullptr;  //Ô´Ö¸Õë±ØĞëÖÃ¿Õ
+        another.data = nullptr;  //Ô´Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½
     }
     Biginteger &operator=(const Biginteger &another) {
-        if (this != &another) {  //¼ÓÉÏÅĞ¶Ï£¬·ÀÖ¹×Ô¼º¸³¸ø×Ô¼º
-            if (data != nullptr)    delete [] data;  //Èç¹ûÔ­À´ÓĞÊı¾İ£¬ÔòÊÍ·ÅÊı¾İ
+        if (this != &another) {
+            if (data != nullptr)    delete [] data;
             new(this) Biginteger(another);
         }
         return *this;
@@ -265,7 +264,7 @@ class Biginteger {
         }
         return *this;
     }
-    /*±È½Ï´óĞ¡¡£×¢Òâ´Ó¸ßÎ»ÏòµÍÎ»±È¡£*/
+    /*æ¯”è¾ƒå¤§å°ã€‚æ³¨æ„ä»é«˜ä½å‘ä½ä½æ¯”ã€‚*/
     /**
      * Compare the big integer to another one.
      * \param a the big integer to compare.
@@ -274,14 +273,14 @@ class Biginteger {
     inline int compareTo(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
         int alen = a.eff_len;
-        //Ò»¸öÎª¸º£¬Ò»¸ö²»Îª¸º
+        //ä¸€ä¸ªä¸ºè´Ÿï¼Œä¸€ä¸ªä¸ä¸ºè´Ÿ
         if(sign < 0&&a.sign >= 0)       return -1;
         if(sign > 0&&a.sign <= 0)       return 1;
         if(sign == 0&&a.sign != 0)      return -a.sign;
         int ret = 0;
         if(eff_len > a.eff_len)         ret = 1;
         else if(eff_len < a.eff_len)    ret = -1;
-        //½øÈë´Ë·ÖÖ§£¬ËµÃ÷·ûºÅÏàÍ¬ÇÒÎ»ÊıÏàÍ¬
+        //è¿›å…¥æ­¤åˆ†æ”¯ï¼Œè¯´æ˜ç¬¦å·ç›¸åŒä¸”ä½æ•°ç›¸åŒ
         else {
             for(int i = alen-1; i >= 0; i--) {
                 if(data[i] > a.data[i]) {
@@ -308,7 +307,7 @@ class Biginteger {
      * \return the length of the big integer.
      */
     inline int getLength() {
-        if(length >=0)
+        if(length >= 0)
             return length;
         int highest = data[eff_len - 1];
 		if(sign == 0)    return 1;
@@ -323,7 +322,7 @@ class Biginteger {
      * Find the opposite number of the big integer.
      * \return the result(-(*this)).
      */
-    Biginteger Negate() const{
+    Biginteger negate() const{
         if(sign == 2)    throw NullException();
         Biginteger ret = *this;
         ret.sign = -ret.sign;
@@ -335,7 +334,7 @@ class Biginteger {
      Biginteger absolute() const{
         if(sign == 2)    throw NullException();
         if(sign >= 0)   return *this;
-        return Negate();
+        return negate();
      }
     /**
      * Add the integer with another one.Using **operator+** has the same effect.<br>
@@ -343,23 +342,23 @@ class Biginteger {
      * \param a another big integer.
      * \return the result((*this) + a).<br>
      */
-    Biginteger Add(const Biginteger &a) const {
+    Biginteger add(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
         //(1,-1)
         if(sign > 0&&a.sign < 0) {
             Biginteger add2 = a;
             add2.sign = 1;
-            return Subt(add2);
+            return subt(add2);
         }
         //(-1,1)
         if(sign < 0&&a.sign > 0) {
             Biginteger add1 = *this;
             add1.sign = 1;
-            return a.Subt(add1);
+            return a.subt(add1);
         }
 		int minlen = std::min(eff_len,a.eff_len);
-		int8_t carry = 0;  //½øÎ»±ê¼Ç
-		Biginteger ret(std::max(eff_len,a.eff_len) + 1);  //´ı·µ»Ø½á¹û
+		int8_t carry = 0;  //ï¿½ï¿½Î»ï¿½ï¿½ï¿½
+		Biginteger ret(std::max(eff_len,a.eff_len) + 1);  //ï¿½ï¿½ï¿½ï¿½ï¿½Ø½ï¿½ï¿½
 		for(int i = 0; i < minlen; i++) {
             int now = data[i] + a.data[i] + carry;
             ret.data[ret.eff_len++] = now % BASE;
@@ -367,7 +366,7 @@ class Biginteger {
 		}
 		if(minlen == eff_len)    ret.addLefts(a,carry,minlen);
 		else    ret.addLefts(*this,carry,minlen);
-		//´¦Àí¶àÓà½øÎ»
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»
 		if(carry != 0)   ret.data[ret.eff_len++] = 1;
         //(0,0)
         if(sign == 0&&a.sign == 0)    ret.sign = 0;
@@ -377,29 +376,30 @@ class Biginteger {
         else if(sign < 0||a.sign < 0)   ret.sign = -1;
 		return ret;
     }
-    Biginteger operator+ (const Biginteger &a) const {return Add(a);}
+    Biginteger operator+ (const Biginteger &a) const {return add(a);}
+    Biginteger &operator+= (const Biginteger &a) {return (*this) = add(a);}
     /**
      * Subtract another integer from the integer.Using **operator-** has the same effect.<br>
      * **Complexity**:O(max(n,m) / k).
      * \param a another big integer.
      * \return the result((*this) - a).<br>
      */
-    Biginteger Subt(const Biginteger &a) const {
-        if(sign == 2||a.sign == 2)    throw NullException();
-        Biginteger suber = *this,subee = a;
+    Biginteger subt(Biginteger subee) const {
+        if(sign == 2||subee.sign == 2)    throw NullException();
+        Biginteger suber = *this;
         //(1,0),(-1,0),(0,0)
         if(subee.sign == 0)        return suber;
         //(0,1),(0,-1)
-        else if(suber.sign == 0)   return subee.Negate();
+        else if(suber.sign == 0)   return subee.negate();
         //(1,-1)
         if(suber.sign > 0&&subee.sign < 0) {
             subee.sign = 1;
-            return suber.Add(subee);
+            return suber.add(subee);
         }
         //(-1,1)
         if(suber.sign < 0&&subee.sign > 0) {
             suber.sign = 1;
-            return suber.Add(subee).Negate();
+            return suber.add(subee).negate();
         }
         //(-1,-1)
         if(subee.sign < 0&&suber.sign < 0) {
@@ -411,7 +411,8 @@ class Biginteger {
         ret.sign = tmp;
         return ret;
     }
-    Biginteger operator- (const Biginteger &a) const {return Subt(a);}
+    Biginteger operator- (const Biginteger &a) const {return subt(a);}
+    Biginteger &operator-= (const Biginteger &a) {return (*this) = subt(a);}
     /**
      * Multiply this integer by another one.<br>
      * **Complexity**:
@@ -423,7 +424,7 @@ class Biginteger {
      * \param a another big integer.
      * \return the result((*this) * a).
      */
-    Biginteger Multiply(const Biginteger &a) const {
+    Biginteger multiply(const Biginteger &a) const {
         if(sign == 2||a.sign == 2)    throw NullException();
         if(sign == 0||a.sign == 0)    return Biginteger("0");
         Biginteger ret;
@@ -433,7 +434,8 @@ class Biginteger {
         ret.sign = (sign == a.sign) ? 1 : -1;
         return ret;
     }
-    Biginteger operator* (const Biginteger &a) const {return Multiply(a);}
+    Biginteger operator* (const Biginteger &a) const {return multiply(a);}
+    Biginteger &operator*= (const Biginteger &a) {return (*this) = multiply(a);}
     /**
      * Divide the integer by another one.Using <strong>operator/ </strong>has the same effect.<br>
      * **Complexity**:Up to O(m(n - m) / k)
@@ -441,24 +443,24 @@ class Biginteger {
      * \return the result((*this) / a).
      * \throws <em>DivByZeroException</em> if the divisor is zero.
      */
-    Biginteger Divide(const Biginteger &a) const {
+    Biginteger divide(const Biginteger &a) const {
     	if(sign == 2||a.sign == 2)	   throw NullException();
-        //³ıÊıÎª0
+        //é™¤æ•°ä¸º0
         if(a.sign == 0)    throw DivByZeroException();
         Biginteger divided(absolute()),divisor(a.absolute());
-        //±»³ıÊı¸üĞ¡
+        //è¢«é™¤æ•°æ›´å°
         if(divisor > divided)      return Biginteger("0");
-        if(divisor == "1")    return (sign == a.sign) ? *this : Negate();
+        if(divisor == "1")    return (sign == a.sign) ? *this : negate();
         if(divisor == "2") {
             Biginteger ret = divided.divByTwo();
-            return (sign == a.sign) ? ret : ret.Negate();
+            return (sign == a.sign) ? ret : ret.negate();
         }
         int highest = divisor.data[divisor.eff_len - 1];
         int d = BASE / (highest + 1);
-        //µ÷Õû³ıÊı£¬ÏÂÃæÊ¹ÓÃKnuth³ı·¨
+        //è°ƒæ•´é™¤æ•°ï¼Œä¸‹é¢ä½¿ç”¨Knuthé™¤æ³•
         divided = divided.mulWithInt(d);
         divisor = divisor.mulWithInt(d);
-        //×¢Òâ³¤¶È¿ÉÄÜ¸Ä±ä¡£ÒÔÏÂÒ»ÇĞ¾ùÒÔµ÷ÕûºóÎª×¼
+        //ä»ç¬¬iä½å¼€å§‹å‘é«˜ä½å–aLen+1ä½ã€‚å¾ªç¯æ¯æ‰§è¡Œä¸€æ¬¡ï¼Œç›¸å½“äºè¿›è¡Œä¸€æ¬¡è¯•å•†ï¼ˆè¿™é‡Œæ˜¯ä¼°å•†ï¼‰
         int aLen = divisor.eff_len,len = divided.eff_len;
         highest = divisor.data[aLen - 1];
         Biginteger ret(len - aLen + 1);
@@ -467,34 +469,39 @@ class Biginteger {
             ret.data[0] = 1;
         }
         for(int i = len - aLen - 1; i >= 0; i--) {
-            //´ÓµÚiÎ»¿ªÊ¼Ïò¸ßÎ»È¡aLen+1Î»¡£Ñ­»·Ã¿Ö´ĞĞÒ»´Î£¬Ïàµ±ÓÚ½øĞĞÒ»´ÎÊÔÉÌ£¨ÕâÀïÊÇ¹ÀÉÌ£©
+            //ä»ç¬¬iä½å¼€å§‹å‘é«˜ä½å–aLen+1ä½ã€‚å¾ªç¯æ¯æ‰§è¡Œä¸€æ¬¡ï¼Œç›¸å½“äºè¿›è¡Œä¸€æ¬¡è¯•å•†ï¼ˆè¿™é‡Œæ˜¯ä¼°å•†ï¼‰
             Biginteger part = divided.getBits(i,1 + aLen,true);
-            //¹À¼ÆµÄÉÌ£¬Ò»¿ªÊ¼¹ÀÎªÉÏ½ç
+            //ä¼°è®¡çš„å•†ï¼Œä¸€å¼€å§‹ä¼°ä¸ºä¸Šç•Œ
             int q = (int)(((int64_t)part.data[aLen] * BASE + part.data[aLen - 1]) / highest);
-            //×¢ÒâÈ¡ÍêºóÔÙÈ¥Ç°µ¼Áã£¬·ñÔò²úÉú²»¿ÉÔ¤¼ûµÄºó¹û
+            //æ³¨æ„å–å®Œåå†å»å‰å¯¼é›¶ï¼Œå¦åˆ™äº§ç”Ÿä¸å¯é¢„è§çš„åæœ
             part.removeZero();
-            //µ±Ç°ÓàÊı
-            Biginteger rmder = part.Subt(divisor.mulWithInt(q));
-            //µ÷Õû¡£²»ÓÃKnuth³ı·¨¾ÍÊÇ½«ÏÂÃæ¸Ä³É¶ş·Ö²éÕÒ
+            //å½“å‰ä½™æ•°
+            Biginteger rmder = part.subt(divisor.mulWithInt(q));
+            //è°ƒæ•´ã€‚ä¸ç”¨Knuthé™¤æ³•å°±æ˜¯å°†ä¸‹é¢æ”¹æˆäºŒåˆ†æŸ¥æ‰¾
             while(rmder.sign < 0) {
-                rmder = std::move(rmder.Add(divisor));
+                rmder = rmder.add(divisor);
                 q--;
             }
             int j,k;
-            //¿½±´Êı×é£¬×¢ÒâÇå0
+            //æ‹·è´æ•°ç»„ï¼Œæ³¨æ„æ¸…0
             for (j = i,k = 0; k < rmder.eff_len; j++, k++)
                 divided.data[j] = rmder.data[k];
             for(; j < i + aLen; j++)
                 divided.data[j] = 0;
-            ret.data[i] = q % BASE;
-            ret.data[i+1] += q / BASE;    //ÓàÊıµÄ´¦Àí
+            ret.data[i] = q;
+            //printf("%d ",q / BASE);
+            if(i == len - aLen - 1) { //åªæœ‰æœ€é«˜ä½å¯èƒ½å‡ºç°å•†>=åŸºæ•°çš„æƒ…å†µ
+                ret.data[i] = q % BASE;
+                ret.data[i+1] += q / BASE;    //å¤„ç†æœ€é«˜ä½çš„ç‰¹æ®Šæƒ…å†µï¼Œè¿™é‡Œå¿…é¡»ç”¨qä¸èƒ½ç”¨ret.date[i]
+            }
         }
         ret.eff_len = len - aLen;
         if(ret.data[len-aLen] > 0)    ret.eff_len++;
         ret.sign = (sign == a.sign) ? 1 : -1;
         return ret;
     }
-    Biginteger operator/ (const Biginteger &a) const {return Divide(a);}
+    Biginteger operator/ (const Biginteger &a) const {return divide(a);}
+    Biginteger &operator/= (const Biginteger &a) {return (*this) = divide(a);}
     /**
      * Find the remainder of this integer to another one.Using **operator%** has the same effect.
      * \param a the divisor.
@@ -504,11 +511,12 @@ class Biginteger {
      * <br>If dividend is negative,the result will be negative.
      * <br>In other cases,the result will be positive.
      */
-    Biginteger Mod(const Biginteger &a) const {
-        Biginteger quot = Divide(a);
-        return Subt(quot.Multiply(a));
+    Biginteger mod(const Biginteger &a) const {
+        Biginteger quot = divide(a);
+        return subt(quot.multiply(a));
     }
-    Biginteger operator% (const Biginteger &a) const {return Mod(a);}
+    Biginteger operator% (const Biginteger &a) const {return mod(a);}
+    Biginteger &operator%= (const Biginteger &a) {return (*this) = mod(a);}
     /**
      * Convert the big integer to an std::string object.
      * \return the string after converting.
@@ -517,31 +525,29 @@ class Biginteger {
         if(sign == 2)   throw NullException();
     	if(sign == 0)   return "0";
     	string ret;
-        ret.reserve((eff_len + 1) * NUM_GROUP_SIZE);
+        ret.reserve(eff_len * NUM_GROUP_SIZE);
 		int now;
 
 		for(int i = 0; i < eff_len - 1; i++) {
 			now = data[i];
 			for(int j = 0; j < NUM_GROUP_SIZE; j++) {
-				ret.append(1,(now % 10) + '0');
+                ret += (char)((now % 10) + '0');
 				now /= 10;
 			}
 		}
 		now = data[eff_len - 1];
-		//´¦Àí×î¸ßÎ»
+		//å¤„ç†æœ€é«˜ä½
 		do {
 			ret.append(1,(now % 10)+'0');
 			now /= 10;
 		} while(now > 0);
-		if(sign < 0)    ret += "-";
+		if(sign < 0)    ret += '-';
 		std::reverse(ret.begin(),ret.end());
 		return ret;
     }
     ~Biginteger() {
-		if(data != nullptr) {
-    		delete []data;
-    		data = nullptr;
-		}
+        delete []data;
+        data = nullptr;
 	}
 };
 #endif // BIGINT_H

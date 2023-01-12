@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['compare_0',['compare',['../class_biginteger.html#a248ce8bc7d4f7f16fbaed0fe93d84e73',1,'Biginteger']]]
+  ['compareto_0',['compareTo',['../class_biginteger.html#acad5b9a1bab4bcf20a69220510adc448',1,'Biginteger']]]
 ];
