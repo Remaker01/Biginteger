@@ -124,7 +124,8 @@ class Biginteger {
     Biginteger getBits(int st,int len,bool needZeros = false) const {
         if(len <= 0)	return Biginteger("0");
         if(st + len > eff_len)    return *this;
-        Biginteger ret(len);
+        Biginteger ret;
+        ret.data = new int[len];
         ret.eff_len = len;
         ret.sign = sign;
         std::copy(data + st,data + st + len,ret.data);
@@ -132,11 +133,9 @@ class Biginteger {
             ret.removeZero();
         return ret;
     }
-    //ȡ�õ�λ
     Biginteger getLower(int len) const {
     	return getBits(0,len);
     }
-	//ȡ�ø�λ���Զ���0
     Biginteger getUpper(int len) const {
         return getBits(eff_len - len,len);
     }
@@ -244,7 +243,7 @@ class Biginteger {
         eff_len = another.eff_len;
         sign = another.sign;
         data = another.data;
-        another.data = nullptr;  //Դָ������ÿ�
+        another.data = nullptr;
     }
     Biginteger &operator=(const Biginteger &another) {
         if (this != &another) {
@@ -357,8 +356,8 @@ class Biginteger {
             return a.subt(add1);
         }
 		int minlen = std::min(eff_len,a.eff_len);
-		int8_t carry = 0;  //��λ���
-		Biginteger ret(std::max(eff_len,a.eff_len) + 1);  //�����ؽ��
+		int8_t carry = 0;  //进位
+		Biginteger ret(std::max(eff_len,a.eff_len) + 1);  //长度
 		for(int i = 0; i < minlen; i++) {
             int now = data[i] + a.data[i] + carry;
             ret.data[ret.eff_len++] = now % BASE;
@@ -366,7 +365,7 @@ class Biginteger {
 		}
 		if(minlen == eff_len)    ret.addLefts(a,carry,minlen);
 		else    ret.addLefts(*this,carry,minlen);
-		//���������λ
+		//注意最高位可能有进位
 		if(carry != 0)   ret.data[ret.eff_len++] = 1;
         //(0,0)
         if(sign == 0&&a.sign == 0)    ret.sign = 0;
@@ -449,8 +448,10 @@ class Biginteger {
         if(a.sign == 0)    throw DivByZeroException();
         Biginteger divided(absolute()),divisor(a.absolute());
         //被除数更小
-        if(divisor > divided)      return Biginteger("0");
-        if(divisor == "1")    return (sign == a.sign) ? *this : negate();
+        if(divisor > divided)
+            return Biginteger("0");
+        if(divisor == "1")
+            return (sign == a.sign) ? *this : negate();
         if(divisor == "2") {
             Biginteger ret = divided.divByTwo();
             return (sign == a.sign) ? ret : ret.negate();
@@ -491,7 +492,7 @@ class Biginteger {
             ret.data[i] = q;
             //printf("%d ",q / BASE);
             if(i == len - aLen - 1) { //只有最高位可能出现商>=基数的情况
-                ret.data[i] = q % BASE;
+                ret.data[i] %= BASE;
                 ret.data[i+1] += q / BASE;    //处理最高位的特殊情况，这里必须用q不能用ret.date[i]
             }
         }
@@ -541,7 +542,8 @@ class Biginteger {
 			ret.append(1,(now % 10)+'0');
 			now /= 10;
 		} while(now > 0);
-		if(sign < 0)    ret += '-';
+		if(sign < 0)
+            ret += '-';
 		std::reverse(ret.begin(),ret.end());
 		return ret;
     }
