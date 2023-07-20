@@ -1,12 +1,12 @@
-Github�ϸ�ʽ�����������⣬�Ƽ���docs/zh_cn/html/index.html<br>
+Github上格式化可能有问题，推荐看docs/zh_cn/html/index.html<br>
 ## Biginteger
-<p>һ����C++д������ѧϰ��Biginteger�ࡣ</p>
-<p>�������й�����ĳ������ѧ�����רҵ��ѧ�����ܵ�Java��BigInteger����������Լ���C++ д��һ���������࣬Ŀǰ���ܻ��ܲ����ƣ�ֻ֧�ּӡ������ˡ��Ƚϴ�С�����ݲ�֧�ָ�����</p>
-<p>���ھ���ʹ�÷�������μ�docs/html��������doxygen�Զ����ɵİ����ĵ���</p>
-<p>��ӭ����κ����������ͽ��顣</p>
-<small>~~Ϊ�˶���Ӣ������������д�ĵ�ʱ������Ӣ��д�ģ�����������ø��ˣ�ϣ�����¹�~~</small>
+<p>一个用C++写的用于学习的Biginteger类。</p>
+<p>本人是中国江苏某三流大学计算机专业的学生，受到Java中BigInteger类的启发，自己用C++ 写了一个大整数类，目前功能还很不完善，只支持加、减、乘、比较大小而且暂不支持负数。</p>
+<p>关于具体使用方法，请参见docs/html，这是用doxygen自动生成的帮助文档。</p>
+<p>欢迎提出任何有益的意见和建议。</p>
+<small>~~为了锻炼英语能力，当初写文档时都是用英文写的，现在早就懒得改了，希望见谅哈~~</small>
 <p>-------------------------------------------------------------------------------------------------------------------------------</p>
-<p>ʹ�÷���������</p>
+<p>使用方法举例：</p>
 <pre>
 #include &lt;iostream&gt;
 #include &lt;string&gt;
@@ -30,11 +30,11 @@ int main() {
     return 0;
 }
 </pre>
-<p>����������</p>
+<p>开发环境：</p>
 <p>IDE:CodeBlocks 20.03 </p>
-<p>������:G++(MinGW 8.1.0) </p>
-<p>�Ѳ���ƽ̨:Windows 10 x64,Intel CPU</p>
-<p>[��ʱ���˲��͵�ַ](https://blog.csdn.net/m0_51303687?spm=1011.2124.3001.5343)</p>
+<p>编译器:G++(MinGW 8.1.0) </p>
+<p>已测试平台:Windows 10 x64,Intel CPU</p>
+<p>[临时个人博客地址](https://blog.csdn.net/m0_51303687?spm=1011.2124.3001.5343)</p>
 
 <p>--------------------------------------------------------------------------------------------------------------------------------------------------------</p>
 There may be some formatting errors on Github.See docs/en_us/html/index.html<br>

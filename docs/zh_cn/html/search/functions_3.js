@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['divide_0',['Divide',['../class_biginteger.html#a96b56cdc7869f883f3f106999b16fbc8',1,'Biginteger']]]
+  ['divide_0',['divide',['../class_biginteger.html#a8a5715877ff3e13eec74785ba265fa9a',1,'Biginteger']]]
 ];

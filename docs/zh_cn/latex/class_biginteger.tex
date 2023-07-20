@@ -9,16 +9,22 @@
 \item 
 \mbox{\hyperlink{class_biginteger_a21756d968ef9ac08e3731cae5f8fe502}{Biginteger}} ()
 \item 
-\mbox{\hyperlink{class_biginteger_ae4615925f117a9633f8fc9f42ee8d318}{Biginteger}} (const char $\ast$s)
+\mbox{\hyperlink{class_biginteger_a85a2acad9c96ddf6b44bb04f009f61e1}{Biginteger}} (const char $\ast$s)
 \item 
-\mbox{\hyperlink{class_biginteger_a9df141c0f08c604235dca2ad403e1b99}{Biginteger}} (string str)
+\mbox{\hyperlink{class_biginteger_a2e1fe9aea580555be401f9fa2f7dbc4c}{Biginteger}} (const string \&str)
 \item 
 \mbox{\hyperlink{class_biginteger_a4058518547ee370dcc58d8223a3a23f7}{Biginteger}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&another)
+\item 
+\mbox{\Hypertarget{class_biginteger_ab8a923b8bdc29b2e068c5977269d7e77}\label{class_biginteger_ab8a923b8bdc29b2e068c5977269d7e77}} 
+{\bfseries Biginteger} (\mbox{\hyperlink{class_biginteger}{Biginteger}} \&\&another)
 \item 
 \mbox{\Hypertarget{class_biginteger_afb19fb966d07c7fa30ac33820a66ace7}\label{class_biginteger_afb19fb966d07c7fa30ac33820a66ace7}} 
 \mbox{\hyperlink{class_biginteger}{Biginteger}} \& {\bfseries operator=} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&another)
 \item 
-int \mbox{\hyperlink{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}{compare}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
+\mbox{\Hypertarget{class_biginteger_aeab57725d2fe3d2c1334cafcd268a474}\label{class_biginteger_aeab57725d2fe3d2c1334cafcd268a474}} 
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \& {\bfseries operator=} (\mbox{\hyperlink{class_biginteger}{Biginteger}} \&\&another) noexcept
+\item 
+int \mbox{\hyperlink{class_biginteger_acad5b9a1bab4bcf20a69220510adc448}{compare\+To}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
 \item 
 \mbox{\Hypertarget{class_biginteger_a322230ffc007cd91a209dc2883d0401c}\label{class_biginteger_a322230ffc007cd91a209dc2883d0401c}} 
 bool {\bfseries operator$<$} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
@@ -38,37 +44,51 @@ bool {\bfseries operator==} (const \mbox{\hyperlink{class_biginteger}{Biginteger
 \mbox{\Hypertarget{class_biginteger_a946fc36660e8bafb337aad705a59e923}\label{class_biginteger_a946fc36660e8bafb337aad705a59e923}} 
 bool {\bfseries operator!=} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
 \item 
-\mbox{\Hypertarget{class_biginteger_a390bb62c521da004deb93dfd0cac1248}\label{class_biginteger_a390bb62c521da004deb93dfd0cac1248}} 
-int {\bfseries get\+Length} () const
+int \mbox{\hyperlink{class_biginteger_a82ded555eabd615eb7f4a28e4d4e9a46}{get\+Length}} ()
 \item 
-\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a547544536451a2baa0c795e4465fa77f}{Negate}} () const
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a6ca9d1384b4807aae25881ec80a644da}{negate}} () const
 \item 
 \mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a6934b903acb5f1dcd9fa46c93bbd2fdf}{absolute}} () const
 \item 
-\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}{Add}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_ae81890da517eb0c5f70a493366361976}{add}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
 \item 
 \mbox{\Hypertarget{class_biginteger_a0eed0b09ff87d13798e0d3bab0cd93d8}\label{class_biginteger_a0eed0b09ff87d13798e0d3bab0cd93d8}} 
 \mbox{\hyperlink{class_biginteger}{Biginteger}} {\bfseries operator+} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
 \item 
-\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}{Subt}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
+\mbox{\Hypertarget{class_biginteger_ac28c1dff53df42fc82733b5edaef8c37}\label{class_biginteger_ac28c1dff53df42fc82733b5edaef8c37}} 
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \& {\bfseries operator+=} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)
+\item 
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a7f2dcafc4999102db88232a52954b32d}{subt}} (\mbox{\hyperlink{class_biginteger}{Biginteger}} subee) const
 \item 
 \mbox{\Hypertarget{class_biginteger_a39151b363c8d12ebea7900787c063556}\label{class_biginteger_a39151b363c8d12ebea7900787c063556}} 
 \mbox{\hyperlink{class_biginteger}{Biginteger}} {\bfseries operator-\/} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
 \item 
-\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}{Multiply}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
+\mbox{\Hypertarget{class_biginteger_ac7b02b9912c1f31328541d396d0b1ed1}\label{class_biginteger_ac7b02b9912c1f31328541d396d0b1ed1}} 
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \& {\bfseries operator-\/=} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)
+\item 
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a9ff3335c9048ca71adcaec07e19c86ec}{multiply}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
 \item 
 \mbox{\Hypertarget{class_biginteger_a49b63e73c4b561c5097d6c695867b005}\label{class_biginteger_a49b63e73c4b561c5097d6c695867b005}} 
 \mbox{\hyperlink{class_biginteger}{Biginteger}} {\bfseries operator$\ast$} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
 \item 
-\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a96b56cdc7869f883f3f106999b16fbc8}{Divide}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
+\mbox{\Hypertarget{class_biginteger_ad11f15173ff2b9c1ee0e2575c8c9ce18}\label{class_biginteger_ad11f15173ff2b9c1ee0e2575c8c9ce18}} 
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \& {\bfseries operator$\ast$=} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)
+\item 
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a8a5715877ff3e13eec74785ba265fa9a}{divide}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
 \item 
 \mbox{\Hypertarget{class_biginteger_aeb90127524eccfa3186c1d87471a162e}\label{class_biginteger_aeb90127524eccfa3186c1d87471a162e}} 
 \mbox{\hyperlink{class_biginteger}{Biginteger}} {\bfseries operator/} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
 \item 
-\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a70a556b9abf76ab8590a06537742646c}{Mod}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
+\mbox{\Hypertarget{class_biginteger_a90b72fba77ad18eb055c39cd48f3d124}\label{class_biginteger_a90b72fba77ad18eb055c39cd48f3d124}} 
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \& {\bfseries operator/=} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)
+\item 
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \mbox{\hyperlink{class_biginteger_a51b114bc60f10d96b529e716a47c2ef7}{mod}} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
 \item 
 \mbox{\Hypertarget{class_biginteger_a2f2ded981f9e411aec496e0f4e388b48}\label{class_biginteger_a2f2ded981f9e411aec496e0f4e388b48}} 
 \mbox{\hyperlink{class_biginteger}{Biginteger}} {\bfseries operator\%} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a) const
+\item 
+\mbox{\Hypertarget{class_biginteger_a87ea784ff2c481158aba0507be884420}\label{class_biginteger_a87ea784ff2c481158aba0507be884420}} 
+\mbox{\hyperlink{class_biginteger}{Biginteger}} \& {\bfseries operator\%=} (const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&a)
 \item 
 string \mbox{\hyperlink{class_biginteger_abb6179b40128fd3531dda1a50d0479fb}{to\+String}} () const
 \end{DoxyCompactItemize}
@@ -82,11 +102,12 @@ It is a big integer class in C++.~\newline
 
 \begin{DoxyEnumerate}
 \item This class provides an internal attribute(which is a pointer to {\itshape int}) to store the big integer. To increase the efficiency,the big integer will be divided into groups every eight digits. 
-\item In {\itshape complexity} of all functions\+:if there are no special notes,{\itshape n} represents the length of {\itshape this,and $\ast$m} represents the length of another one, and {\itshape k=8}. 
+\item In {\itshape complexity} of all functions\+:if there are no special notes,{\itshape n} represents the length of {\itshape this,and $\ast$m} represents the length of another one, and {\itshape k=8}, and (a/b)==ceil(a/b) 
+\item The \mbox{\hyperlink{class_biginteger}{Biginteger}} object is not mutable. 
 \end{DoxyEnumerate}
 \end{DoxyNote}
 \begin{DoxyVersion}{版本}
-1.\+20 (1.\+20.\+220102) 
+2.\+0beta (2.\+0.\+230718) 
 \end{DoxyVersion}
 
 
@@ -97,13 +118,13 @@ It is a big integer class in C++.~\newline
 \doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
 {\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Construct an empty big integer with the length of 0. \mbox{\Hypertarget{class_biginteger_ae4615925f117a9633f8fc9f42ee8d318}\label{class_biginteger_ae4615925f117a9633f8fc9f42ee8d318}} 
+Construct an empty big integer with the length of 0. \mbox{\Hypertarget{class_biginteger_a85a2acad9c96ddf6b44bb04f009f61e1}\label{class_biginteger_a85a2acad9c96ddf6b44bb04f009f61e1}} 
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
 \doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
-{\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}\item[{const char $\ast$}]{s }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily \+\_\+\+PUBLIC\+\_\+ Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}\item[{const char $\ast$}]{s }\end{DoxyParamCaption})}
 
-Construct a big integer with a string constant 
+Construct a big integer with a C-\/style string constant 
 \begin{DoxyParams}{参数}
 {\em s} & the string constant to be constructed. \\
 \hline
@@ -113,13 +134,13 @@ Construct a big integer with a string constant
 {\em if} & the string constant {\bfseries{s}} is not a legal integer,throws \mbox{\hyperlink{class_number_format_exception}{Number\+Format\+Exception}}. \\
 \hline
 \end{DoxyExceptions}
-\mbox{\Hypertarget{class_biginteger_a9df141c0f08c604235dca2ad403e1b99}\label{class_biginteger_a9df141c0f08c604235dca2ad403e1b99}} 
+\mbox{\Hypertarget{class_biginteger_a2e1fe9aea580555be401f9fa2f7dbc4c}\label{class_biginteger_a2e1fe9aea580555be401f9fa2f7dbc4c}} 
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
 \doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
-{\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}\item[{string}]{str }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}\item[{const string \&}]{str }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Construct a big integer with a string constant. Note that the parameter {\itshape std\+::string} will be converted to a C-\/style string constant. 
+Construct a big integer with a std\+::string constant. 
 \begin{DoxyParams}{参数}
 {\em str} & the string constant to be constructed. \\
 \hline
@@ -133,7 +154,7 @@ Construct a big integer with a string constant. Note that the parameter {\itshap
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
 \index{Biginteger@{Biginteger}!Biginteger@{Biginteger}}
 \doxysubsubsection{\texorpdfstring{Biginteger()}{Biginteger()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
-{\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{another }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily Biginteger\+::\+Biginteger (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{another }\end{DoxyParamCaption})}
 
 Construct a big integer with another big integer(\+Copy constructor). 
 
@@ -147,11 +168,11 @@ Construct a big integer with another big integer(\+Copy constructor).
 Find the absolute value of the big integer. \begin{DoxyReturn}{返回}
 the result($\vert$$\ast$this$\vert$). 
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}\label{class_biginteger_a09854fdb645f6753fa9de3ea937ea4c8}} 
-\index{Biginteger@{Biginteger}!Add@{Add}}
-\index{Add@{Add}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Add()}{Add()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Add (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\Hypertarget{class_biginteger_ae81890da517eb0c5f70a493366361976}\label{class_biginteger_ae81890da517eb0c5f70a493366361976}} 
+\index{Biginteger@{Biginteger}!add@{add}}
+\index{add@{add}!Biginteger@{Biginteger}}
+\doxysubsubsection{\texorpdfstring{add()}{add()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::add (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const}
 
 Add the integer with another one.\+Using {\bfseries{operator+}} has the same effect.~\newline
  {\bfseries{Complexity}}\+:O(max(n,m) / k). 
@@ -163,11 +184,11 @@ Add the integer with another one.\+Using {\bfseries{operator+}} has the same eff
 the result(($\ast$this) + a).~\newline
  
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}\label{class_biginteger_a248ce8bc7d4f7f16fbaed0fe93d84e73}} 
-\index{Biginteger@{Biginteger}!compare@{compare}}
-\index{compare@{compare}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{compare()}{compare()}}
-{\footnotesize\ttfamily int Biginteger\+::compare (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\Hypertarget{class_biginteger_acad5b9a1bab4bcf20a69220510adc448}\label{class_biginteger_acad5b9a1bab4bcf20a69220510adc448}} 
+\index{Biginteger@{Biginteger}!compareTo@{compareTo}}
+\index{compareTo@{compareTo}!Biginteger@{Biginteger}}
+\doxysubsubsection{\texorpdfstring{compareTo()}{compareTo()}}
+{\footnotesize\ttfamily int Biginteger\+::compare\+To (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const}
 
 Compare the big integer to another one. 
 \begin{DoxyParams}{参数}
@@ -177,11 +198,11 @@ Compare the big integer to another one.
 \begin{DoxyReturn}{返回}
 1 if this big integer is larger than {\bfseries{a}},0 if equal,and -\/1 if smaller. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_biginteger_a96b56cdc7869f883f3f106999b16fbc8}\label{class_biginteger_a96b56cdc7869f883f3f106999b16fbc8}} 
-\index{Biginteger@{Biginteger}!Divide@{Divide}}
-\index{Divide@{Divide}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Divide()}{Divide()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Divide (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\Hypertarget{class_biginteger_a8a5715877ff3e13eec74785ba265fa9a}\label{class_biginteger_a8a5715877ff3e13eec74785ba265fa9a}} 
+\index{Biginteger@{Biginteger}!divide@{divide}}
+\index{divide@{divide}!Biginteger@{Biginteger}}
+\doxysubsubsection{\texorpdfstring{divide()}{divide()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::divide (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const}
 
 Divide the integer by another one.\+Using {\bfseries{operator/ }}has the same effect.~\newline
  {\bfseries{Complexity}}\+:Up to O(m(n -\/ m) / k) 
@@ -197,11 +218,20 @@ the result(($\ast$this) / a).
 {\em $<$em$>$\+Div\+By\+Zero\+Exception$<$/em$>$} & if the divisor is zero. \\
 \hline
 \end{DoxyExceptions}
-\mbox{\Hypertarget{class_biginteger_a70a556b9abf76ab8590a06537742646c}\label{class_biginteger_a70a556b9abf76ab8590a06537742646c}} 
-\index{Biginteger@{Biginteger}!Mod@{Mod}}
-\index{Mod@{Mod}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Mod()}{Mod()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Mod (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\Hypertarget{class_biginteger_a82ded555eabd615eb7f4a28e4d4e9a46}\label{class_biginteger_a82ded555eabd615eb7f4a28e4d4e9a46}} 
+\index{Biginteger@{Biginteger}!getLength@{getLength}}
+\index{getLength@{getLength}!Biginteger@{Biginteger}}
+\doxysubsubsection{\texorpdfstring{getLength()}{getLength()}}
+{\footnotesize\ttfamily int Biginteger\+::get\+Length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Get the length of the big integer. \begin{DoxyReturn}{返回}
+the length of the big integer. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_biginteger_a51b114bc60f10d96b529e716a47c2ef7}\label{class_biginteger_a51b114bc60f10d96b529e716a47c2ef7}} 
+\index{Biginteger@{Biginteger}!mod@{mod}}
+\index{mod@{mod}!Biginteger@{Biginteger}}
+\doxysubsubsection{\texorpdfstring{mod()}{mod()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::mod (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 Find the remainder of this integer to another one.\+Using {\bfseries{operator\%}} has the same effect. 
 \begin{DoxyParams}{参数}
@@ -221,11 +251,11 @@ the result(($\ast$this) mod a).
 If dividend is negative,the result will be negative. ~\newline
 In other cases,the result will be positive. 
 \end{DoxyNote}
-\mbox{\Hypertarget{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}\label{class_biginteger_a20bdc0cdbaebcf32061e30f5c9ce0218}} 
-\index{Biginteger@{Biginteger}!Multiply@{Multiply}}
-\index{Multiply@{Multiply}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Multiply()}{Multiply()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Multiply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\Hypertarget{class_biginteger_a9ff3335c9048ca71adcaec07e19c86ec}\label{class_biginteger_a9ff3335c9048ca71adcaec07e19c86ec}} 
+\index{Biginteger@{Biginteger}!multiply@{multiply}}
+\index{multiply@{multiply}!Biginteger@{Biginteger}}
+\doxysubsubsection{\texorpdfstring{multiply()}{multiply()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::multiply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const}
 
 Multiply this integer by another one.~\newline
  {\bfseries{Complexity}}\+: 
@@ -244,20 +274,20 @@ The multiplication uses two algorithms
 the result(($\ast$this) $\ast$ a). 
 \end{DoxyReturn}
 
-\end{DoxyEnumerate}\mbox{\Hypertarget{class_biginteger_a547544536451a2baa0c795e4465fa77f}\label{class_biginteger_a547544536451a2baa0c795e4465fa77f}} 
-\index{Biginteger@{Biginteger}!Negate@{Negate}}
-\index{Negate@{Negate}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Negate()}{Negate()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Negate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\end{DoxyEnumerate}\mbox{\Hypertarget{class_biginteger_a6ca9d1384b4807aae25881ec80a644da}\label{class_biginteger_a6ca9d1384b4807aae25881ec80a644da}} 
+\index{Biginteger@{Biginteger}!negate@{negate}}
+\index{negate@{negate}!Biginteger@{Biginteger}}
+\doxysubsubsection{\texorpdfstring{negate()}{negate()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::negate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 Find the opposite number of the big integer. \begin{DoxyReturn}{返回}
 the result(-\/($\ast$this)). 
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}\label{class_biginteger_a7324a7f59695d56feb6cd6cfac10647e}} 
-\index{Biginteger@{Biginteger}!Subt@{Subt}}
-\index{Subt@{Subt}!Biginteger@{Biginteger}}
-\doxysubsubsection{\texorpdfstring{Subt()}{Subt()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::\+Subt (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_biginteger}{Biginteger}} \&}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\Hypertarget{class_biginteger_a7f2dcafc4999102db88232a52954b32d}\label{class_biginteger_a7f2dcafc4999102db88232a52954b32d}} 
+\index{Biginteger@{Biginteger}!subt@{subt}}
+\index{subt@{subt}!Biginteger@{Biginteger}}
+\doxysubsubsection{\texorpdfstring{subt()}{subt()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_biginteger}{Biginteger}} Biginteger\+::subt (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_biginteger}{Biginteger}}}]{subee }\end{DoxyParamCaption}) const}
 
 Subtract another integer from the integer.\+Using {\bfseries{operator-\/}} has the same effect.~\newline
  {\bfseries{Complexity}}\+:O(max(n,m) / k). 
@@ -273,13 +303,14 @@ the result(($\ast$this) -\/ a).~\newline
 \index{Biginteger@{Biginteger}!toString@{toString}}
 \index{toString@{toString}!Biginteger@{Biginteger}}
 \doxysubsubsection{\texorpdfstring{toString()}{toString()}}
-{\footnotesize\ttfamily string Biginteger\+::to\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily string Biginteger\+::to\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
-Convert the big integer to a string constant. \begin{DoxyReturn}{返回}
+Convert the big integer to an std\+::string object. \begin{DoxyReturn}{返回}
 the string after converting. 
 \end{DoxyReturn}
 
 
 该类的文档由以下文件生成\+:\begin{DoxyCompactItemize}
 \item 
-Big\+Integer/Bigint.\+h\end{DoxyCompactItemize}
+Big\+Integer/Bigint.\+h\item 
+Big\+Integer/bigint.\+cpp\end{DoxyCompactItemize}
